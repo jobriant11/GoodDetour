@@ -39,10 +39,10 @@ Productivity
 
 ## Listing URLs
 
-- Homepage: https://productlab.ai/detour/
-- Privacy policy: https://productlab.ai/detour/privacy/
-- Support: https://productlab.ai/detour/support/
-- Terms: https://productlab.ai/detour/terms/
+- Homepage: https://productlab.ai/lab/detour/
+- Privacy policy: https://productlab.ai/lab/detour/privacy/
+- Support: https://productlab.ai/lab/detour/support/
+- Terms: https://productlab.ai/lab/detour/terms/
 - Product Lab directory: https://productlab.ai/lab/
 
 ## Contact

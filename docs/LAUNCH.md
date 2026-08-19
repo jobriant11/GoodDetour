@@ -33,7 +33,7 @@
 - [ ] Publish the privacy policy and support page on a stable HTTPS domain.
 - [ ] Publish the Product Lab directory at `/lab` and the complete Good Detour site at `/detour`.
 - [ ] Integrate only through the existing Product Lab website repository or hosting project; never deploy this repository as the site root.
-- [ ] Review the deployment diff and confirm it is limited to `/lab/**` and `/detour/**` with no root or catch-all rewrites.
+- [ ] Review the deployment diff and confirm it is limited to `/lab/**` with no root or catch-all rewrites.
 - [ ] Smoke-test the existing Product Lab survey application before and after deployment and retain a route-scoped rollback.
 - [ ] Complete the store privacy/data-use disclosures accurately.
 - [ ] Explain each permission in the listing.
