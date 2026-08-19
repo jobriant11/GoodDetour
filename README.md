@@ -15,6 +15,7 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - A 20-detour safety cap for the initial release.
 - Per-domain permission requests instead of broad install-time access.
 - Optional Chrome Sync for rules and preferences; pause counts remain local.
+- In-product deletion for this browser's data and the shared Chrome Sync copy.
 - Privacy-safe product feedback and bug-report entry points.
 - JSON import/export backup.
 - Browser-neutral core and API wrapper for future Firefox/Edge packages.
@@ -63,5 +64,7 @@ The [pre-launch risk review](docs/RISK_REVIEW.md) tracks navigation, sync, permi
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports must not include real private URLs or browsing history; see [SECURITY.md](SECURITY.md).
+
+Private support, privacy, legal, and security contact: admin@productlab.ai.
 
 MIT licensed.

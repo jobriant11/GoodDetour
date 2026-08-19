@@ -32,7 +32,10 @@ const elements = {
   syncStatus: document.querySelector("#sync-status"),
   permissionNotice: document.querySelector("#permission-notice"),
   permissionCopy: document.querySelector("#permission-copy"),
-  grantSyncedPermissions: document.querySelector("#grant-synced-permissions")
+  grantSyncedPermissions: document.querySelector("#grant-synced-permissions"),
+  deleteSyncButton: document.querySelector("#delete-sync-button"),
+  deleteAllButton: document.querySelector("#delete-all-button"),
+  dataNotice: document.querySelector("#data-notice")
 };
 
 let state;
@@ -67,9 +70,12 @@ async function refreshSyncUi() {
     getMissingHostPermissions(state.rules.map((rule) => rule.sourceHost))
   ]);
   elements.syncToggle.checked = status.enabled;
+  elements.deleteSyncButton.disabled = !status.hasSyncedData;
   elements.syncStatus.textContent = status.enabled
     ? `Good Detour is set to use Chrome Sync. When Chrome account sync is enabled, ${state.rules.length} ${state.rules.length === 1 ? "route" : "routes"} can follow you (${Math.max(1, Math.ceil(status.bytesInUse / 1024))} KB used).`
-    : "Chrome Sync is off on this browser. Routes and preferences stay here; an existing synced copy remains available to other browsers.";
+    : status.hasSyncedData
+      ? "Chrome Sync is off on this browser. Routes and preferences stay here; a synced copy remains available to other browsers until you delete it."
+      : "Chrome Sync is off on this browser. Routes and preferences stay here, and no Good Detour synced copy was found.";
   missingHosts = missing;
   elements.permissionNotice.classList.toggle("hidden", missingHosts.length === 0);
   if (missingHosts.length) {
@@ -246,6 +252,35 @@ elements.grantSyncedPermissions.addEventListener("click", async () => {
     await refreshSyncUi();
   } catch (error) {
     showNotice(elements.permissionCopy, error.message, true);
+  }
+});
+
+elements.deleteSyncButton.addEventListener("click", async () => {
+  const confirmed = window.confirm("Delete the Good Detour rules and preferences stored in Chrome Sync? This keeps this browser's current routes, turns sync off here, and clears the shared synced copy.");
+  if (!confirmed) return;
+  try {
+    state = await message({ type: "data:delete-synced" });
+    render();
+    await refreshSyncUi();
+    showNotice(elements.dataNotice, "The Chrome Sync copy was deleted. This browser's routes were kept locally.");
+  } catch (error) {
+    showNotice(elements.dataNotice, error.message, true);
+  }
+});
+
+elements.deleteAllButton.addEventListener("click", async () => {
+  const confirmed = window.confirm("Delete all Good Detour rules, preferences, and pause counts from this browser, and delete the shared Chrome Sync copy? This cannot be undone. JSON backups, device-only counts on other browsers, and public GitHub feedback are not affected.");
+  if (!confirmed) return;
+  try {
+    state = await message({ type: "data:delete-all" });
+    elements.form.reset();
+    elements.ruleId.value = "";
+    elements.mode.value = state.preferences.defaultMode;
+    render();
+    await refreshSyncUi();
+    showNotice(elements.dataNotice, "Good Detour data was deleted from this browser and Chrome Sync.");
+  } catch (error) {
+    showNotice(elements.dataNotice, error.message, true);
   }
 });
 

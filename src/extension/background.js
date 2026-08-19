@@ -49,6 +49,14 @@ async function writeSyncState(state) {
   if (staleRuleKeys.length) await storageRemove(staleRuleKeys, "sync");
 }
 
+async function removeSyncState() {
+  const existing = await storageGet(null, "sync");
+  const keys = Object.keys(existing).filter(
+    (key) => key === SYNC_SETTINGS_KEY || key.startsWith(SYNC_RULE_PREFIX),
+  );
+  if (keys.length) await storageRemove(keys, "sync");
+}
+
 async function persistState(value) {
   const state = mergeState(value);
   assertRuleLimit(state.rules);
@@ -97,10 +105,33 @@ async function setSyncEnabled(enabled) {
 
 async function getSyncStatus() {
   const enabled = await syncEnabled();
+  const hasSyncedData = Boolean(await readSyncState());
   return {
     enabled,
-    bytesInUse: enabled ? await chrome.storage.sync.getBytesInUse(null) : 0
+    hasSyncedData,
+    bytesInUse: hasSyncedData ? await chrome.storage.sync.getBytesInUse(null) : 0
   };
+}
+
+async function deleteSyncedCopy() {
+  const state = await getState();
+  await storageSet({
+    [STORAGE_KEY]: state,
+    [LOCAL_STATS_KEY]: state.localStats,
+    [SYNC_ENABLED_KEY]: false
+  });
+  await removeSyncState();
+  await syncRedirectRules(state);
+  return state;
+}
+
+async function deleteAllData() {
+  const state = defaultState();
+  await storageSet({ [SYNC_ENABLED_KEY]: false });
+  await removeSyncState();
+  await storageRemove([STORAGE_KEY, LOCAL_STATS_KEY, SYNC_ENABLED_KEY]);
+  await syncRedirectRules(state);
+  return state;
 }
 
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
@@ -118,7 +149,18 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
   const relevant = Object.keys(changes).some(
     (key) => key === SYNC_SETTINGS_KEY || key.startsWith(SYNC_RULE_PREFIX),
   );
-  if (relevant) await syncRedirectRules(await getState());
+  if (!relevant) return;
+  if (changes[SYNC_SETTINGS_KEY]?.newValue === undefined) {
+    const local = await storageGet(LOCAL_STATS_KEY);
+    const state = mergeState({
+      ...defaultState(),
+      localStats: local[LOCAL_STATS_KEY]
+    });
+    await storageSet({ [STORAGE_KEY]: state, [SYNC_ENABLED_KEY]: false });
+    await syncRedirectRules(state);
+    return;
+  }
+  await syncRedirectRules(await getState());
 });
 
 chrome.permissions.onAdded.addListener(async () => syncRedirectRules(await getState()));
@@ -151,6 +193,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return getSyncStatus();
       case "sync:toggle":
         return setSyncEnabled(Boolean(message.enabled));
+      case "data:delete-synced":
+        return deleteSyncedCopy();
+      case "data:delete-all":
+        return deleteAllData();
       case "permissions:refresh":
         await syncRedirectRules(state);
         return state;

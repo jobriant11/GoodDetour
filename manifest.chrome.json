@@ -4,7 +4,7 @@
   "short_name": "Good Detour",
   "version": "0.1.0",
   "description": "Gently redirect distracting sites toward places you chose on purpose.",
-  "homepage_url": "https://jobriant11.github.io/GoodDetour/",
+  "homepage_url": "https://productlab.ai/detour/",
   "minimum_chrome_version": "120",
   "icons": {
     "16": "icon-16.png",

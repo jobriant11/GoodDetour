@@ -26,6 +26,7 @@ Features:
 - A 20-detour safety cap for the initial release.
 - Optional Chrome Sync for rules and pause-page preferences.
 - In-extension feedback and bug-report links with privacy-safe submission guidance.
+- Direct controls to delete the Chrome Sync copy or reset Good Detour data on the current browser.
 - Site access requested only when you add that site.
 
 ## Single purpose
@@ -38,10 +39,15 @@ Productivity
 
 ## Listing URLs
 
-- Homepage: https://jobriant11.github.io/GoodDetour/
-- Privacy policy: https://jobriant11.github.io/GoodDetour/privacy.html
-- Support: https://jobriant11.github.io/GoodDetour/support.html
-- Terms: https://jobriant11.github.io/GoodDetour/terms.html
+- Homepage: https://productlab.ai/detour/
+- Privacy policy: https://productlab.ai/detour/privacy/
+- Support: https://productlab.ai/detour/support/
+- Terms: https://productlab.ai/detour/terms/
+- Product Lab directory: https://productlab.ai/lab/
+
+## Contact
+
+- Developer, support, privacy, legal, and security contact: admin@productlab.ai
 
 ## Permission explanations
 
@@ -51,6 +57,8 @@ Productivity
 - Optional site access: requested for each source domain only when the user saves a rule for it.
 
 ## Privacy disclosure answers
+
+Good Detour has no developer-run user account. Rules, preferences, and the device-local pause count can be deleted from the extension's Privacy & data settings. The same screen can remove the shared Chrome Sync copy. Device-local counts on another Chrome instance must be deleted on that instance; exported JSON files and public GitHub feedback are separate.
 
 - Personally identifiable information: not collected.
 - Health information: not collected.
