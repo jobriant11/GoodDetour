@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -29,6 +29,14 @@ for (const key of required) {
   if (!manifest[key]) throw new Error(`Manifest is missing ${key}`);
 }
 
+const iconPaths = new Set([
+  ...Object.values(manifest.icons ?? {}),
+  ...Object.values(manifest.action?.default_icon ?? {}),
+]);
+for (const iconPath of iconPaths) {
+  await access(path.join(extensionRoot, iconPath));
+}
+
 const html = files.filter((candidate) => candidate.endsWith(".html"));
 for (const file of html) {
   const contents = await readFile(file, "utf8");
@@ -38,4 +46,3 @@ for (const file of html) {
 }
 
 console.log(`Checked ${files.length} extension files and manifest.chrome.json`);
-

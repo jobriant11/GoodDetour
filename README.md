@@ -2,7 +2,7 @@
 
 A calm, local-first browser extension that redirects distracting sites toward places the user chose on purpose.
 
-> **Status:** Chrome-first MVP, working title, not yet store-published. Rules and pause counts stay on-device. The project intentionally contains no telemetry, advertising SDK, account system, or remote code.
+> **Status:** Chrome-first v0.1.0 release candidate, not yet store-published. Rules and pause counts stay on-device. The project intentionally contains no telemetry, advertising SDK, account system, or remote code.
 
 ## What works
 
@@ -53,11 +53,10 @@ The requested idea of monetizing “anonymized” browsing behavior is deliberat
 
 ## Release readiness
 
-Automated tests and packaging pass. Store publication still requires an explicit manual Chrome smoke test, final brand and icon assets, publisher/legal details, counsel review, an HTTPS policy/support site, developer registration, and Web Store review. See [the launch checklist](docs/LAUNCH.md).
+Automated tests, packaging, a Chrome smoke test, and store assets are complete. Store publication still requires publisher/legal details, counsel review, the hosted policy/support site, developer registration verification, and Web Store review. See [the launch checklist](docs/LAUNCH.md).
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports must not include real private URLs or browsing history; see [SECURITY.md](SECURITY.md).
 
 MIT licensed.
-

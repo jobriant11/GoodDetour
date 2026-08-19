@@ -1,8 +1,8 @@
-# Chrome Web Store listing draft
+# Chrome Web Store listing
 
 ## Name
 
-Good Detour (working title)
+Good Detour
 
 ## One-line summary
 
@@ -29,6 +29,17 @@ Features:
 
 Good Detour redirects top-level visits from user-selected websites to user-selected destinations to support more intentional browsing.
 
+## Category
+
+Productivity
+
+## Listing URLs
+
+- Homepage: https://jobriant11.github.io/GoodDetour/
+- Privacy policy: https://jobriant11.github.io/GoodDetour/privacy.html
+- Support: https://jobriant11.github.io/GoodDetour/support.html
+- Terms: https://jobriant11.github.io/GoodDetour/terms.html
+
 ## Permission explanations
 
 - `storage`: stores user-created redirect rules, preferences, and a local aggregate pause count on the device.
@@ -36,3 +47,23 @@ Good Detour redirects top-level visits from user-selected websites to user-selec
 - `declarativeNetRequestWithHostAccess`: asks Chrome to perform the redirects the user configured without exposing request contents to extension code.
 - Optional site access: requested for each source domain only when the user saves a rule for it.
 
+## Privacy disclosure answers
+
+- Personally identifiable information: not collected.
+- Health information: not collected.
+- Financial and payment information: not collected.
+- Authentication information: not collected.
+- Personal communications: not collected.
+- Location: not collected.
+- Web history: not collected or transmitted. The extension uses user-entered source domains locally only to create requested redirect rules.
+- User activity: not collected or transmitted. A single aggregate pause-page count is stored locally on the device.
+- Website content: not collected.
+
+Data is not sold, transferred to third parties, used for advertising, or used for purposes unrelated to the extension's single purpose.
+
+## Store assets
+
+- Icon: `store-assets/good-detour-icon-128.png`
+- Screenshot 1: `store-assets/good-detour-dashboard-1280x800.jpg`
+- Screenshot 2: `store-assets/good-detour-pause-1280x800.jpg`
+- Small promotional tile: `store-assets/good-detour-promo-440x280.jpg`

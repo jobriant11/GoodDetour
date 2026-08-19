@@ -4,7 +4,14 @@
   "short_name": "Good Detour",
   "version": "0.1.0",
   "description": "Gently redirect distracting sites toward places you chose on purpose.",
+  "homepage_url": "https://jobriant11.github.io/GoodDetour/",
   "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
   "permissions": [
     "storage",
     "activeTab",
@@ -20,7 +27,11 @@
   },
   "action": {
     "default_title": "Good Detour",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png"
+    }
   },
   "options_page": "options.html",
   "web_accessible_resources": [

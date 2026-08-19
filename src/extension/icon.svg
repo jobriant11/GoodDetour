@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Good Detour">
-  <rect width="128" height="128" rx="34" fill="#1f6f54"/>
-  <path d="M34 82c0-21 12-35 35-35h16" fill="none" stroke="#fffdf7" stroke-width="12" stroke-linecap="round"/>
-  <path d="m70 28 23 19-23 19" fill="none" stroke="#f2c66d" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="34" cy="82" r="7" fill="#fffdf7"/>
+  <rect x="16" y="16" width="96" height="96" rx="26" fill="#1f6f54"/>
+  <path d="M42 84c0-17 10-27 29-27h13" fill="none" stroke="#fffdf7" stroke-width="10" stroke-linecap="round"/>
+  <path d="m70 40 18 17-18 17" fill="none" stroke="#f2c66d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="42" cy="84" r="6" fill="#fffdf7"/>
 </svg>
-
