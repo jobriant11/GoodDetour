@@ -9,6 +9,7 @@ import {
   normalizeHostname,
   normalizeUrl
 } from "../src/extension/core.js";
+import { buildHostOrigins } from "../src/extension/platform.js";
 
 test("normalizes friendly domain input", () => {
   assert.equal(normalizeHostname(" WWW.CNN.COM/story "), "cnn.com");
@@ -56,3 +57,15 @@ test("merges older stored state with current defaults", () => {
   assert.deepEqual(merged.rules, []);
 });
 
+test("requests only HTTP and HTTPS patterns declared by the manifest", () => {
+  assert.deepEqual(buildHostOrigins(["cnn.com"]), [
+    "http://cnn.com/*",
+    "http://*.cnn.com/*",
+    "https://cnn.com/*",
+    "https://*.cnn.com/*"
+  ]);
+  assert.deepEqual(buildHostOrigins(["localhost"]), [
+    "http://localhost/*",
+    "https://localhost/*"
+  ]);
+});

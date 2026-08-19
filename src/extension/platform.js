@@ -24,12 +24,18 @@ export function requestHostPermission(hostname) {
   return requestHostPermissions([hostname]);
 }
 
-export function requestHostPermissions(hostnames) {
+export function buildHostOrigins(hostnames) {
   const origins = [];
   for (const hostname of new Set(hostnames)) {
-    origins.push(`*://${hostname}/*`);
     const isDnsName = hostname.includes(".") && !/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
-    if (isDnsName) origins.push(`*://*.${hostname}/*`);
+    for (const scheme of ["http", "https"]) {
+      origins.push(`${scheme}://${hostname}/*`);
+      if (isDnsName) origins.push(`${scheme}://*.${hostname}/*`);
+    }
   }
-  return api.permissions.request({ origins });
+  return origins;
+}
+
+export function requestHostPermissions(hostnames) {
+  return api.permissions.request({ origins: buildHostOrigins(hostnames) });
 }
