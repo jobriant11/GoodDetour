@@ -76,12 +76,31 @@ input:focus, select:focus, textarea:focus { border-color: var(--green); box-shad
 .popup-footer { margin: 16px 0 0; color: var(--muted); font-size: 12px; }
 .current-site { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: white; overflow-wrap: anywhere; }
 
-.landing { min-height: 100vh; display: grid; place-items: center; padding: 28px; background: radial-gradient(circle at top left, #e2f0e6, transparent 35%), var(--paper); }
-.landing-card { width: min(640px, 100%); text-align: center; padding: clamp(28px, 6vw, 58px); }
-.landing-card .mark { margin: 0 auto 24px; width: 54px; height: 54px; font-size: 24px; }
-.landing-card h1 { font-size: clamp(36px, 7vw, 58px); }
+.landing { min-height: 100vh; display: grid; place-items: center; padding: clamp(20px, 4vw, 54px); background: radial-gradient(circle at 8% 14%, rgba(31,111,84,.1), transparent 28%), radial-gradient(circle at 90% 88%, rgba(31,111,84,.07), transparent 30%), var(--paper); }
+.landing-card { width: min(900px, 100%); text-align: center; padding: clamp(36px, 7vw, 78px); border-radius: 34px; }
+.landing-card .mark { margin: 0 auto 28px; width: 62px; height: 62px; border-radius: 17px; font-size: 28px; }
+.landing-card h1 { max-width: 780px; margin: 12px auto 24px; font-size: clamp(44px, 7vw, 82px); line-height: .95; }
+.landing-card .lead { margin: 0 auto 28px; font-size: clamp(17px, 2vw, 21px); }
+.landing-card > .notice:not(.error) { padding: 18px 22px; font-size: 16px; }
 .landing-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+.landing-actions .button { border-radius: 999px; padding: 14px 24px; }
 .countdown { color: var(--green); font-weight: 800; }
+
+.welcome-page { overflow-x: hidden; }
+.welcome-page .topbar { width: min(1180px, calc(100% - 48px)); padding-top: 34px; }
+.welcome-page main { width: min(1180px, calc(100% - 48px)); }
+.welcome-hero { padding: clamp(90px, 13vw, 165px) 0 clamp(80px, 10vw, 125px); }
+.welcome-hero h1 { max-width: 1120px; margin: 18px 0 38px; font-size: clamp(64px, 9.5vw, 132px); line-height: .91; letter-spacing: -.075em; }
+.welcome-hero .lead { max-width: 960px; font-size: clamp(20px, 2.25vw, 30px); }
+.welcome-actions { width: min(720px, 100%); margin-top: 40px; }
+.welcome-actions .button { width: 100%; padding: 17px 28px; border-radius: 999px; font-size: 17px; }
+.welcome-page .suggestions { gap: 18px; padding-bottom: 110px; }
+.welcome-page .suggestion { min-height: 180px; padding: 28px; border-radius: 26px; }
+.welcome-page .suggestion strong { font-size: 21px; }
+.welcome-page .suggestion span { margin-top: 12px; font-size: 15px; }
+.welcome-permission { margin-bottom: 80px; padding: clamp(34px, 6vw, 72px); border-radius: 34px; }
+.welcome-permission h2 { max-width: 800px; font-size: clamp(38px, 5vw, 62px); line-height: 1; }
+.welcome-permission .lead { max-width: 880px; font-size: clamp(17px, 2vw, 22px); }
 
 .legal { max-width: 760px; padding-bottom: 70px; line-height: 1.7; }
 .legal h1 { font-size: 46px; }
@@ -95,6 +114,8 @@ input:focus, select:focus, textarea:focus { border-color: var(--green); box-shad
   .card-form, .card-rules, .card-wide, .card-narrow { grid-column: 1 / -1; }
   .suggestions { grid-template-columns: 1fr 1fr; }
   .topbar { align-items: flex-start; }
+  .welcome-hero h1 { font-size: clamp(54px, 16vw, 86px); }
+  .welcome-page .suggestions { padding-bottom: 70px; }
 }
 @media (max-width: 480px) {
   .shell { width: min(100% - 24px, 1040px); }
