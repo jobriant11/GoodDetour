@@ -13,7 +13,8 @@ body { margin: 0; color: var(--ink); background: var(--paper); }
 a { color: inherit; }
 .shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
 header { display: flex; align-items: center; justify-content: space-between; padding: 34px 0; }
-.wordmark { text-decoration: none; font-size: 18px; font-weight: 850; letter-spacing: -.03em; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.wordmark img { width: 40px; height: 40px; display: block; object-fit: contain; }
 .contact { color: var(--muted); font-size: 13px; text-underline-offset: 4px; }
 .lab-main { padding: clamp(72px, 10vw, 130px) 0 130px; }
 .eyebrow { margin: 0 0 18px; color: var(--green); font-size: 12px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
