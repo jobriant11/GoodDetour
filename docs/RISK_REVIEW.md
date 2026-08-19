@@ -25,6 +25,7 @@ Good Detour changes navigation, so a small bug can have an outsized effect. Thes
 8. **Public feedback can attract spam or sensitive disclosures.** Keep structured templates, moderation ownership, security reporting separation, and privacy-safe examples.
 9. **Policy or disclosure drift can block publication.** Treat the manifest, privacy policy, store disclosures, and actual behavior as one versioned release unit.
 10. **Deletion can be misunderstood across devices and services.** Test sync deletion propagation. Keep explaining that device-local counts must be removed on each browser and that JSON backups and GitHub feedback are separate.
+11. **A Product Lab deployment could disrupt the existing survey application.** Never deploy this repository as the Product Lab site root. Restrict integration to `/lab/**` and `/detour/**`, inspect rewrites and shared assets, smoke-test the survey before and after, and keep a path-scoped rollback.
 
 ## Deliberately excluded
 

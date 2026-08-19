@@ -51,3 +51,15 @@ Product Lab is the portfolio layer, while each experiment owns a separate stable
 - `/detour/privacy/`, `/detour/terms/`, and `/detour/support/` contain product-specific policy and support content.
 
 Future products should receive their own top-level product path and appear as another card in `/lab/`. If a product graduates to a standalone domain, preserve inbound links with permanent redirects from its Product Lab path to the equivalent pages on the new domain. Do not combine policies for unrelated products into one generic Lab policy.
+
+### Protected Product Lab deployment boundary
+
+The existing productlab.ai pages serve the survey application and are production-critical. Good Detour must never replace, rebuild, or alter those pages from this repository.
+
+- Treat deployment as an additive integration into the existing Product Lab website repository or hosting project.
+- Limit changes to the exact `/lab/**` and `/detour/**` route namespaces.
+- Never deploy this repository's `docs/` directory as the Product Lab hosting root.
+- Do not add a root catch-all, global rewrite, shared 404, or unscoped header/cache rule for Good Detour.
+- Do not overwrite existing shared assets, application bundles, survey routes, or root navigation without a separate explicit request and review.
+- Record and smoke-test the existing survey application's critical URLs before and after any deployment.
+- Require a route-scoped rollback that can remove `/lab/**` and `/detour/**` without changing the survey application.

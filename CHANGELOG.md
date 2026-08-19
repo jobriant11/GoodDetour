@@ -14,6 +14,7 @@ All notable changes to Good Detour are documented here.
 - Refresh the product, welcome, and pause-page presentation with a bolder editorial design.
 - Standardize private support, privacy, legal, and security contact at admin@productlab.ai.
 - Give Good Detour its own `/detour` site and policy namespace, with a reusable `/lab` product-directory entry.
+- Add a hard deployment boundary protecting Product Lab's existing survey application and root pages.
 - Add structured, privacy-safe product feedback and bug-report links.
 - Cap configuration, imports, sync, and compiled rules at 20 detours for the initial release.
 - Keep aggregate pause counts in local extension storage with no telemetry.
