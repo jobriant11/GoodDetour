@@ -65,4 +65,6 @@ The [pre-launch risk review](docs/RISK_REVIEW.md) tracks navigation, sync, permi
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports must not include real private URLs or browsing history; see [SECURITY.md](SECURITY.md).
 
+Private support, privacy, legal, and security contact: admin@productlab.ai.
+
 MIT licensed.

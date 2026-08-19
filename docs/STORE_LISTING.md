@@ -44,6 +44,10 @@ Productivity
 - Support: https://jobriant11.github.io/GoodDetour/support.html
 - Terms: https://jobriant11.github.io/GoodDetour/terms.html
 
+## Contact
+
+- Developer, support, privacy, legal, and security contact: admin@productlab.ai
+
 ## Permission explanations
 
 - `storage`: stores user-created redirect rules and preferences locally or, only after the user opts in, in Chrome Sync. The aggregate pause count remains local.

@@ -3,8 +3,8 @@
 ## Product and legal blockers
 
 - [ ] Complete a final trademark clearance check for “Good Detour.”
-- [ ] Choose the publishing legal entity, support email, privacy email, and business contact details.
-- [ ] Add a dedicated, monitored private privacy-rights contact to the policies and store listing.
+- [ ] Choose the publishing legal entity and remaining business contact details.
+- [x] Use admin@productlab.ai as the monitored support, privacy-rights, legal, and security contact.
 - [ ] Have qualified counsel review the privacy policy, terms, age position, launch jurisdictions, and any monetization.
 - [x] Keep browsing-data sale, behavioral advertising, and concealed collection out of the product.
 - [x] Publish the source repository under MIT.
