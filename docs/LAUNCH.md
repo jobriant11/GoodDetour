@@ -13,6 +13,7 @@
 - [x] Core rule tests.
 - [x] JavaScript syntax, manifest, and extension-CSP checks.
 - [x] Chrome Sync serialization, local-to-sync migration, local-only stats, second-browser permission gating, and empty-account tests.
+- [x] Enforce and test the 20-detour cap across creation, import, sync, and compiled rules.
 - [x] Reproducible unpacked build and ZIP command.
 - [x] Manual unpacked smoke test in stable Chrome: install, onboarding, permission grant, and redirects.
 - [ ] Complete extended manual coverage: disable, edit, import/export, permission denial, uninstall/reinstall backup restore.

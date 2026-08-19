@@ -4,6 +4,7 @@ export const SYNC_RULE_PREFIX = "goodDetourSyncRule:";
 export const SYNC_ENABLED_KEY = "goodDetourSyncEnabled";
 export const LOCAL_STATS_KEY = "goodDetourLocalStats";
 export const STATE_VERSION = 2;
+export const MAX_RULES = 20;
 
 export const suggestions = [
   { name: "Associated Press", url: "https://apnews.com/", note: "Straightforward global reporting" },
@@ -65,6 +66,10 @@ export function createRule(input, existingRules = []) {
   if (!destinationUrl) throw new Error("Enter a valid HTTP or HTTPS destination.");
   if (destinationUrl.length > 2048) throw new Error("Destination URLs must be 2,048 characters or fewer.");
   if (sourceHost === destinationHost) throw new Error("Source and destination cannot be the same site.");
+  const editingExistingRule = Boolean(input.id && existingRules.some((rule) => rule.id === input.id));
+  if (!editingExistingRule && existingRules.length >= MAX_RULES) {
+    throw new Error(`Good Detour supports up to ${MAX_RULES} detours for now.`);
+  }
 
   const duplicate = existingRules.find(
     (rule) => rule.sourceHost === sourceHost && rule.id !== input.id,
@@ -112,6 +117,7 @@ export function compileRules(rules, globallyEnabled = true) {
   if (!globallyEnabled) return [];
   return rules
     .filter((rule) => rule.enabled)
+    .slice(0, MAX_RULES)
     .map((rule, index) => ({
       id: index + 1,
       priority: 1,
@@ -153,6 +159,7 @@ export function portableState(value) {
 
 export function toSyncItems(value) {
   const state = portableState(value);
+  assertRuleLimit(state.rules);
   const items = {
     [SYNC_SETTINGS_KEY]: {
       version: state.version,
@@ -164,6 +171,11 @@ export function toSyncItems(value) {
     items[`${SYNC_RULE_PREFIX}${encodeURIComponent(rule.id)}`] = rule;
   }
   return items;
+}
+
+export function assertRuleLimit(rules) {
+  if (!Array.isArray(rules) || rules.length <= MAX_RULES) return;
+  throw new Error(`Good Detour supports up to ${MAX_RULES} detours for now.`);
 }
 
 export function fromSyncItems(items) {

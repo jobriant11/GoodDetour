@@ -23,6 +23,7 @@ Features:
 - Direct redirects when you do not want an intermediate page.
 - Per-rule and global pause controls.
 - Import/export backup and redirect-loop prevention.
+- A 20-detour safety cap for the initial release.
 - Optional Chrome Sync for rules and pause-page preferences.
 - In-extension feedback and bug-report links with privacy-safe submission guidance.
 - Site access requested only when you add that site.

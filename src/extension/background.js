@@ -1,4 +1,5 @@
 import {
+  assertRuleLimit,
   compileRules,
   defaultState,
   fromSyncItems,
@@ -50,6 +51,7 @@ async function writeSyncState(state) {
 
 async function persistState(value) {
   const state = mergeState(value);
+  assertRuleLimit(state.rules);
   if (await syncEnabled()) {
     await writeSyncState(state);
   } else {

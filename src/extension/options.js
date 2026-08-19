@@ -1,4 +1,4 @@
-import { createRule, findCycle, mergeState, suggestions } from "./core.js";
+import { createRule, findCycle, MAX_RULES, mergeState, suggestions } from "./core.js";
 import {
   addStorageChangedListener,
   getMissingHostPermissions,
@@ -15,6 +15,7 @@ const elements = {
   destination: document.querySelector("#destination"),
   mode: document.querySelector("#mode"),
   formNotice: document.querySelector("#form-notice"),
+  saveRule: document.querySelector("#save-rule"),
   ruleList: document.querySelector("#rule-list"),
   empty: document.querySelector("#empty-state"),
   count: document.querySelector("#rule-count"),
@@ -52,7 +53,8 @@ function showNotice(element, text, isError = false) {
 function render() {
   elements.globalToggle.checked = state.enabled;
   elements.empty.classList.toggle("hidden", state.rules.length > 0);
-  elements.count.textContent = `${state.rules.length} ${state.rules.length === 1 ? "route" : "routes"}`;
+  elements.count.textContent = `${state.rules.length} / ${MAX_RULES} detours`;
+  elements.saveRule.disabled = state.rules.length >= MAX_RULES && !elements.ruleId.value;
   elements.ruleList.replaceChildren(...state.rules.map(renderRule));
   elements.landingTitle.value = state.preferences.landingTitle;
   elements.landingMessage.value = state.preferences.landingMessage;
@@ -110,6 +112,7 @@ function renderRule(rule) {
     elements.source.value = rule.sourceHost;
     elements.destination.value = rule.destinationUrl;
     elements.mode.value = rule.mode;
+    elements.saveRule.disabled = false;
     elements.source.focus();
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -190,6 +193,9 @@ elements.importFile.addEventListener("change", async () => {
   try {
     const imported = JSON.parse(await file.text());
     if (!Array.isArray(imported.rules)) throw new Error("That file does not contain a rules list.");
+    if (imported.rules.length > MAX_RULES) {
+      throw new Error(`Imports can contain up to ${MAX_RULES} detours.`);
+    }
     const validated = [];
     for (const candidate of imported.rules) {
       if (candidate?.id && validated.some((rule) => rule.id === candidate.id)) {

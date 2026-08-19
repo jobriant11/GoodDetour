@@ -44,6 +44,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--green); box-shad
 .row > * { flex: 1; }
 .button { border: 0; border-radius: 12px; padding: 11px 16px; color: white; background: var(--green); font-weight: 750; }
 .button:hover { background: var(--green-dark); }
+.button:disabled { cursor: not-allowed; opacity: .55; }
 .button.secondary { color: var(--ink); background: var(--mint); }
 .button.ghost { color: var(--ink); background: transparent; border: 1px solid var(--line); }
 .button.danger { color: var(--danger); background: #f8e7e4; }

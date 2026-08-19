@@ -12,6 +12,7 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - Suggested destinations with local autocomplete.
 - Global and per-rule controls.
 - URL validation, duplicate detection, and redirect-cycle prevention.
+- A 20-detour safety cap for the initial release.
 - Per-domain permission requests instead of broad install-time access.
 - Optional Chrome Sync for rules and preferences; pause counts remain local.
 - Privacy-safe product feedback and bug-report entry points.
@@ -56,6 +57,8 @@ The requested idea of monetizing “anonymized” browsing behavior is deliberat
 ## Release readiness
 
 Automated tests, packaging, a Chrome smoke test, and store assets are complete. Store publication still requires publisher/legal details, counsel review, the hosted policy/support site, developer registration verification, and Web Store review. See [the launch checklist](docs/LAUNCH.md).
+
+The [pre-launch risk review](docs/RISK_REVIEW.md) tracks navigation, sync, permission, import, privacy, and operational failure modes.
 
 ## Contributing
 

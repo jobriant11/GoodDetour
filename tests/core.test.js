@@ -1,11 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  assertRuleLimit,
   compileRules,
   createRule,
   defaultState,
   findCycle,
   fromSyncItems,
+  MAX_RULES,
   mergeState,
   normalizeHostname,
   normalizeUrl,
@@ -99,4 +101,29 @@ test("splits synced state into quota-friendly items and keeps stats local", () =
 
 test("recognizes an account with no synced Good Detour data", () => {
   assert.equal(fromSyncItems({ unrelatedExtensionKey: true }), null);
+});
+
+test("caps configuration and compiled redirects at twenty detours", () => {
+  const rules = [];
+  for (let index = 0; index < MAX_RULES; index += 1) {
+    rules.push(createRule({
+      id: `rule-${index}`,
+      sourceHost: `source-${index}.example`,
+      destinationUrl: `https://destination-${index}.example/`
+    }, rules));
+  }
+  assert.equal(rules.length, 20);
+  assert.throws(
+    () => createRule({ sourceHost: "too-many.example", destinationUrl: "https://safe.example/" }, rules),
+    /up to 20 detours/,
+  );
+  assert.doesNotThrow(() => createRule({
+    ...rules[0],
+    destinationUrl: "https://updated.example/"
+  }, rules));
+
+  const twentyOne = rules.concat({ ...rules[0], id: "rule-20", sourceHost: "source-20.example" });
+  assert.equal(compileRules(twentyOne).length, 20);
+  assert.throws(() => assertRuleLimit(twentyOne), /up to 20 detours/);
+  assert.throws(() => toSyncItems({ ...defaultState(), rules: twentyOne }), /up to 20 detours/);
 });

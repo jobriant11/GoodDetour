@@ -10,4 +10,5 @@ All notable changes to Good Detour are documented here.
 - Add global and per-rule controls plus JSON import/export.
 - Add optional Chrome Sync for rule definitions and preferences, with per-browser site permission approval.
 - Add structured, privacy-safe product feedback and bug-report links.
+- Cap configuration, imports, sync, and compiled rules at 20 detours for the initial release.
 - Keep aggregate pause counts in local extension storage with no telemetry.
