@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Good Detour — Redirects</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="shell topbar">
+      <div class="brand"><span class="mark" aria-hidden="true">↗</span> Good Detour</div>
+      <label class="switch"><input id="global-toggle" type="checkbox"> Redirects on</label>
+    </header>
+
+    <main>
+      <section class="shell hero">
+        <p class="eyebrow">Browse with intention</p>
+        <h1>Trade the reflex for a better route.</h1>
+        <p class="lead">Choose the sites that pull you in, then decide where you would rather go. Everything stays on this device.</p>
+      </section>
+
+      <section class="shell section grid">
+        <form id="rule-form" class="card card-form">
+          <p class="eyebrow">New redirect</p>
+          <h2>Make a detour</h2>
+          <input id="rule-id" type="hidden">
+          <div class="field">
+            <label for="source">When I visit</label>
+            <input id="source" name="source" type="text" inputmode="url" placeholder="cnn.com" autocomplete="off" required>
+            <span class="hint">A domain is enough. Good Detour requests access only to sites you add.</span>
+          </div>
+          <div class="field">
+            <label for="destination">Take me to</label>
+            <input id="destination" name="destination" type="url" inputmode="url" placeholder="https://apnews.com/" list="destination-list" required>
+            <datalist id="destination-list"></datalist>
+          </div>
+          <div class="field">
+            <label for="mode">How should it feel?</label>
+            <select id="mode" name="mode">
+              <option value="pause">Pause page, then continue</option>
+              <option value="direct">Go directly</option>
+            </select>
+          </div>
+          <div id="form-notice" class="notice hidden" role="status"></div>
+          <button class="button" type="submit">Save redirect</button>
+        </form>
+
+        <section class="card card-rules">
+          <div class="row">
+            <div>
+              <p class="eyebrow">Your routes</p>
+              <h2>Redirects</h2>
+            </div>
+            <span id="rule-count" class="muted"></span>
+          </div>
+          <div id="empty-state" class="notice">No redirects yet. Try <strong>cnn.com → apnews.com</strong> or <strong>foxnews.com → npr.org</strong>.</div>
+          <div id="rule-list" class="rule-list" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section class="shell section">
+        <p class="eyebrow">A gentler next click</p>
+        <h2>Suggested destinations</h2>
+        <div id="suggestions" class="suggestions"></div>
+      </section>
+
+      <section class="shell section grid">
+        <section class="card" style="grid-column: span 7">
+          <p class="eyebrow">Pause page</p>
+          <h2>Make the interruption yours</h2>
+          <form id="preferences-form">
+            <div class="field">
+              <label for="landing-title">Headline</label>
+              <input id="landing-title" maxlength="100">
+            </div>
+            <div class="field">
+              <label for="landing-message">Message</label>
+              <textarea id="landing-message" rows="3" maxlength="280"></textarea>
+            </div>
+            <div class="field">
+              <label for="pause-seconds">Seconds before continuing</label>
+              <input id="pause-seconds" type="number" min="3" max="60">
+            </div>
+            <button class="button secondary" type="submit">Save pause page</button>
+          </form>
+        </section>
+        <section class="card" style="grid-column: span 5">
+          <p class="eyebrow">Backup</p>
+          <h2>Your rules, portable</h2>
+          <p class="muted">Export before switching devices or browsers. Imports are validated and redirect loops are rejected.</p>
+          <div class="popup-actions">
+            <button id="export-button" class="button ghost" type="button">Export JSON</button>
+            <label class="button ghost" for="import-file" style="text-align:center">Import JSON</label>
+            <input id="import-file" class="hidden" type="file" accept="application/json,.json">
+          </div>
+          <p id="backup-notice" class="notice hidden" role="status"></p>
+        </section>
+      </section>
+    </main>
+
+    <footer class="shell footer">
+      Local-first by design · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+    </footer>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
+

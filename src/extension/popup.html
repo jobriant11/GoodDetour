@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Good Detour</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="popup">
+    <div class="brand"><span class="mark" aria-hidden="true">↗</span> Good Detour</div>
+    <h1>Where next?</h1>
+    <p class="muted">Current site</p>
+    <div id="current-site" class="current-site">Checking this tab…</div>
+    <div class="popup-actions">
+      <button id="add-current" class="button" type="button">Redirect this site</button>
+      <button id="manage" class="button secondary" type="button">Manage redirects</button>
+    </div>
+    <label class="switch" style="margin-top:16px"><input id="global-toggle" type="checkbox"> Redirects on</label>
+    <p id="popup-notice" class="notice hidden" role="status"></p>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
+

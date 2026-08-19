@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a reproducible Good Detour problem without sharing private browsing data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include sensitive, private, intranet, authentication, or account URLs. Replace them with example.com-style placeholders."
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options: [Chrome, Edge, Brave, Other Chromium]
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use public placeholder domains rather than real private URLs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+
