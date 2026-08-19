@@ -9,6 +9,7 @@ Good Detour changes navigation, so a small bug can have an outsized effect. Thes
 - Redirects apply only to top-level navigation and use Chrome's declarative rules rather than reading request contents.
 - Site access is requested one source domain at a time. Synced rules remain inactive on a new Chrome until permission is granted there.
 - Rules stay local unless Chrome Sync is explicitly enabled. Pause counts never sync, and no per-user or timestamped traffic logging is present.
+- Settings can delete the shared Chrome Sync copy or reset all Good Detour data on the current browser.
 - Imports are validated before permissions or state changes, and backups remain available as readable JSON.
 - Feedback forms warn that GitHub submissions are public and never attach browser context automatically.
 
@@ -23,6 +24,7 @@ Good Detour changes navigation, so a small bug can have an outsized effect. Thes
 7. **Service-worker or dynamic-rule failures can strand redirects.** Test browser restart, extension update, global disable, uninstall/reinstall, and recovery from a rejected sync write.
 8. **Public feedback can attract spam or sensitive disclosures.** Keep structured templates, moderation ownership, security reporting separation, and privacy-safe examples.
 9. **Policy or disclosure drift can block publication.** Treat the manifest, privacy policy, store disclosures, and actual behavior as one versioned release unit.
+10. **Deletion can be misunderstood across devices and services.** Test sync deletion propagation. Keep explaining that device-local counts must be removed on each browser and that JSON backups and GitHub feedback are separate.
 
 ## Deliberately excluded
 

@@ -15,6 +15,7 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - A 20-detour safety cap for the initial release.
 - Per-domain permission requests instead of broad install-time access.
 - Optional Chrome Sync for rules and preferences; pause counts remain local.
+- In-product deletion for this browser's data and the shared Chrome Sync copy.
 - Privacy-safe product feedback and bug-report entry points.
 - JSON import/export backup.
 - Browser-neutral core and API wrapper for future Firefox/Edge packages.

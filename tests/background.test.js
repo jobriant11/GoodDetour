@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { defaultState, STORAGE_KEY, SYNC_ENABLED_KEY } from "../src/extension/core.js";
+import { defaultState, STORAGE_KEY, SYNC_ENABLED_KEY, SYNC_SETTINGS_KEY } from "../src/extension/core.js";
 
 function pick(data, keys) {
   if (keys === null || keys === undefined) return { ...data };
@@ -25,6 +25,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   const localData = { [STORAGE_KEY]: state };
   const syncData = {};
   let messageListener;
+  let storageChangeListener;
   let dynamicRules = [];
   let permissionGranted = false;
   const area = (data) => ({
@@ -40,7 +41,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
     storage: {
       local: area(localData),
       sync: area(syncData),
-      onChanged: { addListener() {} }
+      onChanged: { addListener(listener) { storageChangeListener = listener; } }
     },
     permissions: {
       contains: async () => permissionGranted,
@@ -83,4 +84,32 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   await send({ type: "permissions:refresh" });
   assert.equal(dynamicRules.length, 1);
   assert.equal(dynamicRules[0].action.redirect.url, "https://apnews.com/");
+
+  const keptLocally = await send({ type: "data:delete-synced" });
+  assert.equal(keptLocally.rules[0].sourceHost, "cnn.com");
+  assert.equal(localData[SYNC_ENABLED_KEY], false);
+  assert.equal(localData[STORAGE_KEY].rules[0].sourceHost, "cnn.com");
+  assert.deepEqual(syncData, {});
+  assert.equal(dynamicRules.length, 1);
+
+  await send({ type: "sync:toggle", enabled: true });
+  const deleted = await send({ type: "data:delete-all" });
+  assert.deepEqual(deleted.rules, []);
+  assert.equal(deleted.localStats.totalPauses, 0);
+  assert.equal(STORAGE_KEY in localData, false);
+  assert.equal(SYNC_ENABLED_KEY in localData, false);
+  assert.deepEqual(syncData, {});
+  assert.deepEqual(dynamicRules, []);
+
+  await send({ type: "state:replace", state });
+  await send({ type: "pause:count" });
+  await send({ type: "sync:toggle", enabled: true });
+  const oldSettings = syncData[SYNC_SETTINGS_KEY];
+  for (const key of Object.keys(syncData)) delete syncData[key];
+  await storageChangeListener({ [SYNC_SETTINGS_KEY]: { oldValue: oldSettings } }, "sync");
+  const afterRemoteDeletion = await send({ type: "state:get" });
+  assert.equal(localData[SYNC_ENABLED_KEY], false);
+  assert.deepEqual(afterRemoteDeletion.rules, []);
+  assert.equal(afterRemoteDeletion.localStats.totalPauses, 8);
+  assert.deepEqual(dynamicRules, []);
 });
