@@ -1,5 +1,11 @@
 import { createRule, findCycle, mergeState, suggestions } from "./core.js";
-import { requestHostPermission, requestHostPermissions, sendMessage } from "./platform.js";
+import {
+  addStorageChangedListener,
+  getMissingHostPermissions,
+  requestHostPermission,
+  requestHostPermissions,
+  sendMessage
+} from "./platform.js";
 
 const elements = {
   globalToggle: document.querySelector("#global-toggle"),
@@ -20,10 +26,16 @@ const elements = {
   pauseSeconds: document.querySelector("#pause-seconds"),
   exportButton: document.querySelector("#export-button"),
   importFile: document.querySelector("#import-file"),
-  backupNotice: document.querySelector("#backup-notice")
+  backupNotice: document.querySelector("#backup-notice"),
+  syncToggle: document.querySelector("#sync-toggle"),
+  syncStatus: document.querySelector("#sync-status"),
+  permissionNotice: document.querySelector("#permission-notice"),
+  permissionCopy: document.querySelector("#permission-copy"),
+  grantSyncedPermissions: document.querySelector("#grant-synced-permissions")
 };
 
 let state;
+let missingHosts = [];
 
 async function message(payload) {
   const response = await sendMessage(payload);
@@ -45,6 +57,23 @@ function render() {
   elements.landingTitle.value = state.preferences.landingTitle;
   elements.landingMessage.value = state.preferences.landingMessage;
   elements.pauseSeconds.value = state.preferences.pauseSeconds;
+}
+
+async function refreshSyncUi() {
+  const [status, missing] = await Promise.all([
+    message({ type: "sync:status" }),
+    getMissingHostPermissions(state.rules.map((rule) => rule.sourceHost))
+  ]);
+  elements.syncToggle.checked = status.enabled;
+  elements.syncStatus.textContent = status.enabled
+    ? `Good Detour is set to use Chrome Sync. When Chrome account sync is enabled, ${state.rules.length} ${state.rules.length === 1 ? "route" : "routes"} can follow you (${Math.max(1, Math.ceil(status.bytesInUse / 1024))} KB used).`
+    : "Chrome Sync is off on this browser. Routes and preferences stay here; an existing synced copy remains available to other browsers.";
+  missingHosts = missing;
+  elements.permissionNotice.classList.toggle("hidden", missingHosts.length === 0);
+  if (missingHosts.length) {
+    elements.permissionCopy.textContent = `${missingHosts.length} saved ${missingHosts.length === 1 ? "site needs" : "sites need"} permission on this Chrome before redirects can run.`;
+    elements.grantSyncedPermissions.textContent = `Enable ${missingHosts.length} ${missingHosts.length === 1 ? "site" : "sites"} on this Chrome`;
+  }
 }
 
 function renderRule(rule) {
@@ -70,6 +99,7 @@ function renderRule(rule) {
   toggle.addEventListener("click", async () => {
     state = await message({ type: "rule:toggle", id: rule.id, enabled: !rule.enabled });
     render();
+    await refreshSyncUi();
   });
   const edit = document.createElement("button");
   edit.className = "icon-button";
@@ -90,6 +120,7 @@ function renderRule(rule) {
   remove.addEventListener("click", async () => {
     state = await message({ type: "rule:delete", id: rule.id });
     render();
+    await refreshSyncUi();
   });
   actions.append(toggle, edit, remove);
   item.append(copy, actions);
@@ -121,6 +152,7 @@ elements.form.addEventListener("submit", async (event) => {
     elements.mode.value = state.preferences.defaultMode;
     showNotice(elements.formNotice, `Saved ${rule.sourceHost}.`);
     render();
+    await refreshSyncUi();
   } catch (error) {
     showNotice(elements.formNotice, error.message, true);
   }
@@ -159,7 +191,12 @@ elements.importFile.addEventListener("change", async () => {
     const imported = JSON.parse(await file.text());
     if (!Array.isArray(imported.rules)) throw new Error("That file does not contain a rules list.");
     const validated = [];
-    for (const candidate of imported.rules) validated.push(createRule(candidate, validated));
+    for (const candidate of imported.rules) {
+      if (candidate?.id && validated.some((rule) => rule.id === candidate.id)) {
+        throw new Error("Import contains duplicate rule identifiers.");
+      }
+      validated.push(createRule(candidate, validated));
+    }
     const cycle = findCycle(validated.filter((rule) => rule.enabled));
     if (cycle) throw new Error(`Import contains a loop: ${cycle.join(" → ")}`);
     const hosts = [...new Set(validated.map((rule) => rule.sourceHost))];
@@ -170,11 +207,47 @@ elements.importFile.addEventListener("change", async () => {
     state = await message({ type: "state:replace", state });
     showNotice(elements.backupNotice, `Imported ${validated.length} routes.`);
     render();
+    await refreshSyncUi();
   } catch (error) {
     showNotice(elements.backupNotice, error.message, true);
   } finally {
     elements.importFile.value = "";
   }
+});
+
+elements.syncToggle.addEventListener("change", async () => {
+  const enabled = elements.syncToggle.checked;
+  elements.syncToggle.disabled = true;
+  try {
+    const result = await message({ type: "sync:toggle", enabled });
+    state = result.state;
+    render();
+    await refreshSyncUi();
+  } catch (error) {
+    elements.syncToggle.checked = !enabled;
+    showNotice(elements.syncStatus, error.message, true);
+  } finally {
+    elements.syncToggle.disabled = false;
+  }
+});
+
+elements.grantSyncedPermissions.addEventListener("click", async () => {
+  try {
+    if (!(await requestHostPermissions(missingHosts))) {
+      throw new Error("Site access was not granted. Synced routes remain saved but inactive on this Chrome.");
+    }
+    await message({ type: "permissions:refresh" });
+    await refreshSyncUi();
+  } catch (error) {
+    showNotice(elements.permissionCopy, error.message, true);
+  }
+});
+
+addStorageChangedListener(async (changes, areaName) => {
+  if (areaName !== "sync" || !elements.syncToggle.checked || !Object.keys(changes).some((key) => key.startsWith("goodDetourSync"))) return;
+  state = await message({ type: "state:get" });
+  render();
+  await refreshSyncUi();
 });
 
 for (const suggestion of suggestions) {
@@ -204,3 +277,4 @@ if (prefill) elements.source.value = prefill;
 state = await message({ type: "state:get" });
 elements.mode.value = state.preferences.defaultMode;
 render();
+await refreshSyncUi();

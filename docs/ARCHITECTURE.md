@@ -8,7 +8,9 @@ Good Detour is a dependency-free Manifest V3 extension.
 - `platform.js` isolates WebExtension API differences.
 - `background.js` is the only state mutation and dynamic-rule synchronization authority.
 - `options.js`, `popup.js`, and `landing.js` are extension pages with no inline or remote scripts.
-- Chrome storage is local. There is no backend, account, telemetry endpoint, or remote configuration.
+- State is local by default. Users can opt in to Chrome Sync for rule definitions and preferences; aggregate pause counts remain local. There is no developer backend, account, telemetry endpoint, or remote configuration.
+- Synced rules are split into separate storage items to stay below Chrome's per-item quota, with total quota checks before writes.
+- A synced rule remains inactive on a new Chrome until that browser grants its source-domain permission.
 - Host access is optional and requested for each source domain from a user gesture.
 - Dynamic rules apply only to top-level page navigation.
 
@@ -16,7 +18,7 @@ Good Detour is a dependency-free Manifest V3 extension.
 
 Primary risks are malicious destinations, redirect loops, excessive permissions, rule loss, imported configuration abuse, remote-code injection, and sensitive URLs leaking through bug reports or telemetry.
 
-Current controls include HTTP(S)-only destinations, duplicate and cycle validation, a narrow request resource type, per-site access prompts, CSP-compatible packaged scripts, validated imports, readable source, and zero network transmission.
+Current controls include HTTP(S)-only destinations, duplicate and cycle validation, a narrow request resource type, per-site access prompts, CSP-compatible packaged scripts, validated imports, readable source, no developer-controlled network transmission, and explicit opt-in before Chrome Sync is used.
 
 Before 1.0, add automated browser integration tests, JSON schema validation with size/rule-count limits, safer confirmation for imported rules, dependency and secret scanning, private vulnerability reporting, a data-flow diagram, and an external security review.
 
@@ -34,9 +36,8 @@ The MVP needs no cloud backend. That is a feature, not missing infrastructure.
 When remote features have a justified user-facing purpose:
 
 - Host the public privacy/support site on Cloud Storage + Cloud CDN or Firebase Hosting.
-- Put authenticated sync behind Cloud Run and API Gateway.
-- Use Firestore only for user-requested sync data, encrypted at the application layer with keys unavailable to the service where feasible.
+- Use Chrome Sync for the current Chromium-only portability feature; it requires no developer backend.
+- If future cross-browser sync justifies a service, put it behind Cloud Run and API Gateway and encrypt user-requested sync data at the application layer with keys unavailable to the service where feasible.
 - Use Secret Manager, Cloud Armor, least-privilege service accounts, retention limits, regional controls, deletion APIs, audit logs, budgets, and environment separation.
 - Never log full visited URLs, source domains, redirect rules, or request headers.
 - Complete a privacy impact assessment and update in-product disclosure and consent before collection starts.
-

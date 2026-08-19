@@ -1,11 +1,15 @@
 const api = globalThis.browser ?? globalThis.chrome;
 
-export function storageGet(key) {
-  return api.storage.local.get(key);
+export function storageGet(key, area = "local") {
+  return api.storage[area].get(key);
 }
 
-export function storageSet(value) {
-  return api.storage.local.set(value);
+export function storageSet(value, area = "local") {
+  return api.storage[area].set(value);
+}
+
+export function storageRemove(keys, area = "local") {
+  return api.storage[area].remove(keys);
 }
 
 export function sendMessage(message) {
@@ -38,4 +42,21 @@ export function buildHostOrigins(hostnames) {
 
 export function requestHostPermissions(hostnames) {
   return api.permissions.request({ origins: buildHostOrigins(hostnames) });
+}
+
+export function hasHostPermission(hostname) {
+  return api.permissions.contains({ origins: buildHostOrigins([hostname]) });
+}
+
+export async function getMissingHostPermissions(hostnames) {
+  const unique = [...new Set(hostnames)];
+  const checks = await Promise.all(unique.map(async (hostname) => ({
+    hostname,
+    granted: await hasHostPermission(hostname)
+  })));
+  return checks.filter((item) => !item.granted).map((item) => item.hostname);
+}
+
+export function addStorageChangedListener(listener) {
+  api.storage.onChanged.addListener(listener);
 }

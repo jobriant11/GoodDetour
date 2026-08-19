@@ -16,7 +16,7 @@
       <section class="shell hero">
         <p class="eyebrow">Browse with intention</p>
         <h1>Trade the reflex for a better route.</h1>
-        <p class="lead">Choose the sites that pull you in, then decide where you would rather go. Everything stays on this device.</p>
+        <p class="lead">Choose the sites that pull you in, then decide where you would rather go. Keep routes on this device or opt in to Chrome Sync.</p>
       </section>
 
       <section class="shell section grid">
@@ -31,7 +31,7 @@
           </div>
           <div class="field">
             <label for="destination">Take me to</label>
-            <input id="destination" name="destination" type="url" inputmode="url" placeholder="https://apnews.com/" list="destination-list" required>
+            <input id="destination" name="destination" type="url" inputmode="url" placeholder="https://apnews.com/" list="destination-list" maxlength="2048" required>
             <datalist id="destination-list"></datalist>
           </div>
           <div class="field">
@@ -65,7 +65,7 @@
       </section>
 
       <section class="shell section grid">
-        <section class="card" style="grid-column: span 7">
+        <section class="card card-wide">
           <p class="eyebrow">Pause page</p>
           <h2>Make the interruption yours</h2>
           <form id="preferences-form">
@@ -84,10 +84,24 @@
             <button class="button secondary" type="submit">Save pause page</button>
           </form>
         </section>
-        <section class="card" style="grid-column: span 5">
+        <section class="card card-narrow">
+          <p class="eyebrow">Chrome Sync</p>
+          <h2>Keep routes in step</h2>
+          <p class="muted">Optionally sync redirect rules and pause-page preferences through your Google account. Your pause count stays local, and each Chrome controls its own site permissions. Avoid sensitive or private URLs in synced rules.</p>
+          <label class="sync-choice"><input id="sync-toggle" type="checkbox"> Use Chrome Sync on this browser</label>
+          <p id="sync-status" class="notice" role="status">Checking Chrome Sync…</p>
+          <div id="permission-notice" class="notice hidden">
+            <p id="permission-copy"></p>
+            <button id="grant-synced-permissions" class="button secondary" type="button">Enable saved routes</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="shell section grid">
+        <section class="card card-wide">
           <p class="eyebrow">Backup</p>
-          <h2>Your rules, portable</h2>
-          <p class="muted">Export before switching devices or browsers. Imports are validated and redirect loops are rejected.</p>
+          <h2>Portable backup</h2>
+          <p class="muted">Export for a manual backup or a different browser. Imports are validated and redirect loops are rejected.</p>
           <div class="popup-actions">
             <button id="export-button" class="button ghost" type="button">Export JSON</button>
             <label class="button ghost" for="import-file" style="text-align:center">Import JSON</label>
@@ -99,9 +113,8 @@
     </main>
 
     <footer class="shell footer">
-      Local-first by design · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+      Local-first, with optional Chrome Sync · <a href="feedback.html">Send feedback</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
     </footer>
     <script type="module" src="options.js"></script>
   </body>
 </html>
-

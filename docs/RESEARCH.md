@@ -31,7 +31,7 @@ The redirect category already has strong domain/wildcard tools and sophisticated
 1. A friendly domain-first rule builder.
 2. A calm, editable pause page between habit and destination.
 3. Curated alternatives that remain suggestions, not political or editorial endorsements.
-4. Local-first state, narrow per-site permissions, readable source, backup, and loop safety.
+4. Local-first state with optional Chrome Sync, narrow per-site permissions, readable source, backup, and loop safety.
 5. Later, local-only time budgets and recommendations computed on-device.
 
 ## Binding Chrome Web Store constraints
@@ -55,4 +55,3 @@ Viable paths to evaluate instead:
 - Enterprise administration and support.
 
 Do not add ads to the extension without a fresh store-policy and legal review. In particular, do not assume a pause page creates permission to monetize the browsing event that triggered it.
-

@@ -2,7 +2,7 @@
 
 A calm, local-first browser extension that redirects distracting sites toward places the user chose on purpose.
 
-> **Status:** Chrome-first v0.1.0 release candidate, not yet store-published. Rules and pause counts stay on-device. The project intentionally contains no telemetry, advertising SDK, account system, or remote code.
+> **Status:** Chrome-first v0.1.0 release candidate, not yet store-published. Rules stay local unless the user opts in to Chrome Sync; pause counts always stay local. The project intentionally contains no telemetry, advertising SDK, developer account system, or remote code.
 
 ## What works
 
@@ -13,6 +13,8 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - Global and per-rule controls.
 - URL validation, duplicate detection, and redirect-cycle prevention.
 - Per-domain permission requests instead of broad install-time access.
+- Optional Chrome Sync for rules and preferences; pause counts remain local.
+- Privacy-safe product feedback and bug-report entry points.
 - JSON import/export backup.
 - Browser-neutral core and API wrapper for future Firefox/Edge packages.
 

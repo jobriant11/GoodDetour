@@ -14,7 +14,7 @@ Good Detour puts a calm, intentional step between a familiar distraction and wha
 
 Create a simple rule such as `cnn.com → apnews.com`, choose a short pause page or a direct redirect, and change or disable it whenever you like. Good Detour validates URLs, prevents redirect loops, and lets you export your configuration for backup.
 
-Privacy is part of the feature: rules and pause counts stay in your browser. There is no account, browsing-history upload, advertising SDK, or hidden tracking.
+Privacy is part of the feature: rules stay on one browser unless you opt in to Chrome Sync, and pause counts always stay local. There is no developer account, browsing-history upload, advertising SDK, or hidden tracking.
 
 Features:
 
@@ -23,6 +23,8 @@ Features:
 - Direct redirects when you do not want an intermediate page.
 - Per-rule and global pause controls.
 - Import/export backup and redirect-loop prevention.
+- Optional Chrome Sync for rules and pause-page preferences.
+- In-extension feedback and bug-report links with privacy-safe submission guidance.
 - Site access requested only when you add that site.
 
 ## Single purpose
@@ -42,7 +44,7 @@ Productivity
 
 ## Permission explanations
 
-- `storage`: stores user-created redirect rules, preferences, and a local aggregate pause count on the device.
+- `storage`: stores user-created redirect rules and preferences locally or, only after the user opts in, in Chrome Sync. The aggregate pause count remains local.
 - `activeTab`: reads the current tab's domain only after the user opens the toolbar popup, so “Redirect this site” can be offered.
 - `declarativeNetRequestWithHostAccess`: asks Chrome to perform the redirects the user configured without exposing request contents to extension code.
 - Optional site access: requested for each source domain only when the user saves a rule for it.
@@ -55,15 +57,16 @@ Productivity
 - Authentication information: not collected.
 - Personal communications: not collected.
 - Location: not collected.
-- Web history: not collected or transmitted. The extension uses user-entered source domains locally only to create requested redirect rules.
+- Web history: not observed or collected. When Chrome Sync is enabled, user-entered rule domains and destination URLs are synchronized through the user's Google account; they are not sent to the developer.
 - User activity: not collected or transmitted. A single aggregate pause-page count is stored locally on the device.
 - Website content: not collected.
 
-Data is not sold, transferred to third parties, used for advertising, or used for purposes unrelated to the extension's single purpose.
+Data is not sold, used for advertising, or used for purposes unrelated to the extension's single purpose. Optional synchronization is performed by Google's Chrome Sync service at the user's request; the developer cannot access that synced data.
 
 ## Store assets
 
 - Icon: `store-assets/good-detour-icon-128.png`
 - Screenshot 1: `store-assets/good-detour-dashboard-1280x800.jpg`
 - Screenshot 2: `store-assets/good-detour-pause-1280x800.jpg`
+- Screenshot 3: `store-assets/good-detour-sync-1280x800.jpg`
 - Small promotional tile: `store-assets/good-detour-promo-440x280.jpg`

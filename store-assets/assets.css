@@ -25,6 +25,16 @@ h2 { margin:0 0 18px; font-size:24px; letter-spacing:-.035em; }
 .status { width:10px; height:10px; border-radius:50%; background:#41a879; box-shadow:0 0 0 4px #e2f3e9; }
 .footerline { display:flex; gap:10px; margin-top:18px; }
 .suggestion { flex:1; padding:12px; border:1px solid var(--line); border-radius:13px; background:var(--panel); font-size:12px; }
+.sync-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:20px; margin-top:58px; }
+.sync-grid .card { min-height:510px; padding:34px; }
+.sync-grid h1 { max-width:560px; margin-bottom:20px; font-size:52px; }
+.sync-grid .lead { max-width:520px; color:var(--muted); font-size:17px; line-height:1.58; }
+.sync-choice { display:flex; gap:11px; align-items:center; margin:28px 0 18px; font-size:14px; font-weight:800; }
+.check { width:19px; height:19px; display:grid; place-items:center; border-radius:5px; color:white; background:var(--green); font-size:12px; }
+.sync-note { padding:16px; border-radius:14px; background:var(--mint); color:var(--green); font-size:14px; line-height:1.45; }
+.permission-list { display:grid; gap:12px; margin-top:25px; }
+.permission { display:flex; align-items:center; justify-content:space-between; padding:16px; border:1px solid var(--line); border-radius:14px; background:white; }
+.permission small { display:block; margin-top:4px; color:var(--muted); }
 
 .pause-wrap { height:700px; display:grid; place-items:center; }
 .pause-card { width:670px; padding:54px; text-align:center; }

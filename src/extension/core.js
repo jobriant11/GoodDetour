@@ -1,5 +1,9 @@
 export const STORAGE_KEY = "goodDetourState";
-export const STATE_VERSION = 1;
+export const SYNC_SETTINGS_KEY = "goodDetourSyncSettings";
+export const SYNC_RULE_PREFIX = "goodDetourSyncRule:";
+export const SYNC_ENABLED_KEY = "goodDetourSyncEnabled";
+export const LOCAL_STATS_KEY = "goodDetourLocalStats";
+export const STATE_VERSION = 2;
 
 export const suggestions = [
   { name: "Associated Press", url: "https://apnews.com/", note: "Straightforward global reporting" },
@@ -59,6 +63,7 @@ export function createRule(input, existingRules = []) {
 
   if (!sourceHost) throw new Error("Enter a valid source site, such as cnn.com.");
   if (!destinationUrl) throw new Error("Enter a valid HTTP or HTTPS destination.");
+  if (destinationUrl.length > 2048) throw new Error("Destination URLs must be 2,048 characters or fewer.");
   if (sourceHost === destinationHost) throw new Error("Source and destination cannot be the same site.");
 
   const duplicate = existingRules.find(
@@ -136,3 +141,49 @@ export function mergeState(value) {
   };
 }
 
+export function portableState(value) {
+  const state = mergeState(value);
+  return {
+    version: STATE_VERSION,
+    enabled: state.enabled,
+    rules: state.rules,
+    preferences: state.preferences
+  };
+}
+
+export function toSyncItems(value) {
+  const state = portableState(value);
+  const items = {
+    [SYNC_SETTINGS_KEY]: {
+      version: state.version,
+      enabled: state.enabled,
+      preferences: state.preferences
+    }
+  };
+  for (const rule of state.rules) {
+    items[`${SYNC_RULE_PREFIX}${encodeURIComponent(rule.id)}`] = rule;
+  }
+  return items;
+}
+
+export function fromSyncItems(items) {
+  const settings = items?.[SYNC_SETTINGS_KEY];
+  if (!settings || typeof settings !== "object") return null;
+  const rules = Object.entries(items)
+    .filter(([key, value]) => key.startsWith(SYNC_RULE_PREFIX) && value && typeof value === "object")
+    .map(([, value]) => value)
+    .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  return mergeState({ ...settings, rules });
+}
+
+export function syncStorageUsage(items) {
+  const encoder = new TextEncoder();
+  const itemBytes = Object.entries(items).map(
+    ([key, value]) => encoder.encode(key + JSON.stringify(value)).byteLength,
+  );
+  return {
+    itemCount: itemBytes.length,
+    totalBytes: itemBytes.reduce((total, bytes) => total + bytes, 0),
+    largestItemBytes: Math.max(0, ...itemBytes)
+  };
+}

@@ -5,9 +5,14 @@ import {
   createRule,
   defaultState,
   findCycle,
+  fromSyncItems,
   mergeState,
   normalizeHostname,
-  normalizeUrl
+  normalizeUrl,
+  SYNC_RULE_PREFIX,
+  SYNC_SETTINGS_KEY,
+  syncStorageUsage,
+  toSyncItems
 } from "../src/extension/core.js";
 import { buildHostOrigins } from "../src/extension/platform.js";
 
@@ -68,4 +73,30 @@ test("requests only HTTP and HTTPS patterns declared by the manifest", () => {
     "http://localhost/*",
     "https://localhost/*"
   ]);
+});
+
+test("splits synced state into quota-friendly items and keeps stats local", () => {
+  const state = defaultState();
+  state.localStats.totalPauses = 42;
+  state.rules = [
+    createRule({ id: "one", sourceHost: "cnn.com", destinationUrl: "apnews.com" }),
+    createRule({ id: "two", sourceHost: "foxnews.com", destinationUrl: "npr.org" })
+  ];
+  const items = toSyncItems(state);
+  assert.ok(items[SYNC_SETTINGS_KEY]);
+  assert.ok(items[`${SYNC_RULE_PREFIX}one`]);
+  assert.ok(items[`${SYNC_RULE_PREFIX}two`]);
+  assert.equal(JSON.stringify(items).includes("totalPauses"), false);
+  const usage = syncStorageUsage(items);
+  assert.equal(usage.itemCount, 3);
+  assert.ok(usage.largestItemBytes < 8_000);
+  assert.ok(usage.totalBytes < 100_000);
+
+  const restored = fromSyncItems(items);
+  assert.deepEqual(restored.rules.map((rule) => rule.id), ["one", "two"]);
+  assert.equal(restored.localStats.totalPauses, 0);
+});
+
+test("recognizes an account with no synced Good Detour data", () => {
+  assert.equal(fromSyncItems({ unrelatedExtensionKey: true }), null);
 });

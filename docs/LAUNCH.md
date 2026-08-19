@@ -12,9 +12,11 @@
 
 - [x] Core rule tests.
 - [x] JavaScript syntax, manifest, and extension-CSP checks.
+- [x] Chrome Sync serialization, local-to-sync migration, local-only stats, second-browser permission gating, and empty-account tests.
 - [x] Reproducible unpacked build and ZIP command.
 - [x] Manual unpacked smoke test in stable Chrome: install, onboarding, permission grant, and redirects.
 - [ ] Complete extended manual coverage: disable, edit, import/export, permission denial, uninstall/reinstall backup restore.
+- [ ] Manually verify opt-in Chrome Sync between two signed-in Chrome profiles, including the per-browser site-permission step and sync-off behavior.
 - [ ] Test at 100%, 125%, and 200% zoom and with keyboard-only navigation.
 - [ ] Add Chrome integration coverage in CI.
 - [ ] Security review and accessibility audit.
@@ -31,6 +33,7 @@
 
 ## Operations
 
+- [x] Add privacy-safe product feedback and bug-report entry points.
 - [ ] Enable GitHub branch protection, required CI, Dependabot/security scanning, and private vulnerability reporting.
 - [ ] Add release signing/versioning ownership and a rollback procedure.
 - [ ] Create a support triage rotation and public changelog.
