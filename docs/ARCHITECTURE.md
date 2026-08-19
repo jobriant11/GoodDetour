@@ -41,3 +41,13 @@ When remote features have a justified user-facing purpose:
 - Use Secret Manager, Cloud Armor, least-privilege service accounts, retention limits, regional controls, deletion APIs, audit logs, budgets, and environment separation.
 - Never log full visited URLs, source domains, redirect rules, or request headers.
 - Complete a privacy impact assessment and update in-product disclosure and consent before collection starts.
+
+## Product Lab web structure
+
+Product Lab is the portfolio layer, while each experiment owns a separate stable path:
+
+- `/lab/` lists active products using reusable product cards.
+- `/detour/` is Good Detour's product homepage.
+- `/detour/privacy/`, `/detour/terms/`, and `/detour/support/` contain product-specific policy and support content.
+
+Future products should receive their own top-level product path and appear as another card in `/lab/`. If a product graduates to a standalone domain, preserve inbound links with permanent redirects from its Product Lab path to the equivalent pages on the new domain. Do not combine policies for unrelated products into one generic Lab policy.

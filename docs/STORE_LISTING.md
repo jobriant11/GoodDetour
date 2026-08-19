@@ -39,10 +39,11 @@ Productivity
 
 ## Listing URLs
 
-- Homepage: https://jobriant11.github.io/GoodDetour/
-- Privacy policy: https://jobriant11.github.io/GoodDetour/privacy.html
-- Support: https://jobriant11.github.io/GoodDetour/support.html
-- Terms: https://jobriant11.github.io/GoodDetour/terms.html
+- Homepage: https://productlab.ai/detour/
+- Privacy policy: https://productlab.ai/detour/privacy/
+- Support: https://productlab.ai/detour/support/
+- Terms: https://productlab.ai/detour/terms/
+- Product Lab directory: https://productlab.ai/lab/
 
 ## Contact
 
