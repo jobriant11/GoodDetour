@@ -1,4 +1,5 @@
 export const STORAGE_KEY = "goodDetourState";
+export const APPEARANCE_KEY = "goodDetourAppearance";
 export const SYNC_SETTINGS_KEY = "goodDetourSyncSettings";
 export const SYNC_RULE_PREFIX = "goodDetourSyncRule:";
 export const SYNC_ENABLED_KEY = "goodDetourSyncEnabled";

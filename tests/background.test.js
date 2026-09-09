@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { defaultState, STORAGE_KEY, SYNC_ENABLED_KEY, SYNC_SETTINGS_KEY } from "../src/extension/core.js";
+import { APPEARANCE_KEY, defaultState, STORAGE_KEY, SYNC_ENABLED_KEY, SYNC_SETTINGS_KEY } from "../src/extension/core.js";
 
 function pick(data, keys) {
   if (keys === null || keys === undefined) return { ...data };
@@ -22,7 +22,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
     updatedAt: "2026-08-19T12:00:00.000Z"
   }];
 
-  const localData = { [STORAGE_KEY]: state };
+  const localData = { [STORAGE_KEY]: state, [APPEARANCE_KEY]: "dark" };
   const syncData = {};
   let messageListener;
   let storageChangeListener;
@@ -71,6 +71,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(migrated.enabled, true);
   assert.equal(localData[SYNC_ENABLED_KEY], true);
   assert.equal(JSON.stringify(syncData).includes("totalPauses"), false);
+  assert.equal(APPEARANCE_KEY in syncData, false);
   assert.ok(Object.keys(syncData).some((key) => key.startsWith("goodDetourSyncRule:")));
   assert.deepEqual(dynamicRules, []);
 
@@ -89,6 +90,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(keptLocally.rules[0].sourceHost, "cnn.com");
   assert.equal(localData[SYNC_ENABLED_KEY], false);
   assert.equal(localData[STORAGE_KEY].rules[0].sourceHost, "cnn.com");
+  assert.equal(localData[APPEARANCE_KEY], "dark");
   assert.deepEqual(syncData, {});
   assert.equal(dynamicRules.length, 1);
 
@@ -98,6 +100,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(deleted.localStats.totalPauses, 0);
   assert.equal(STORAGE_KEY in localData, false);
   assert.equal(SYNC_ENABLED_KEY in localData, false);
+  assert.equal(APPEARANCE_KEY in localData, false);
   assert.deepEqual(syncData, {});
   assert.deepEqual(dynamicRules, []);
 

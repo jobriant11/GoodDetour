@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Good Detour — Redirects</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module" src="theme.js"></script>
   </head>
   <body>
     <header class="shell topbar">
       <div class="brand"><span class="mark" aria-hidden="true">↗</span> Good Detour</div>
-      <label class="switch"><input id="global-toggle" type="checkbox"> Redirects on</label>
+      <div class="topbar-controls">
+        <label class="appearance-choice" for="appearance">Appearance
+          <select id="appearance" aria-describedby="appearance-notice" disabled>
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <label class="switch"><input id="global-toggle" type="checkbox"> Redirects on</label>
+      </div>
     </header>
+    <p id="appearance-notice" class="shell hint hidden" role="status"></p>
 
     <main>
       <section class="shell hero">

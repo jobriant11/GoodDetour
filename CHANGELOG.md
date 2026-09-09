@@ -2,6 +2,13 @@
 
 All notable changes to Good Detour are documented here.
 
+## Unreleased
+
+- Add Light, Dark, and System appearance controls to the popup and redirect settings.
+- Apply the saved device-local appearance across extension pages, with live system-theme and cross-page updates.
+- Improve keyboard focus visibility and theme-aware form, notice, and action colors.
+- Reset appearance to System when deleting all Good Detour data.
+
 ## 0.1.0 — 2026-08-19
 
 - Add user-created domain redirects with per-site permission requests.

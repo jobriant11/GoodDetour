@@ -1,4 +1,5 @@
 import {
+  APPEARANCE_KEY,
   assertRuleLimit,
   compileRules,
   defaultState,
@@ -129,7 +130,7 @@ async function deleteAllData() {
   const state = defaultState();
   await storageSet({ [SYNC_ENABLED_KEY]: false });
   await removeSyncState();
-  await storageRemove([STORAGE_KEY, LOCAL_STATS_KEY, SYNC_ENABLED_KEY]);
+  await storageRemove([STORAGE_KEY, LOCAL_STATS_KEY, SYNC_ENABLED_KEY, APPEARANCE_KEY]);
   await syncRedirectRules(state);
   return state;
 }

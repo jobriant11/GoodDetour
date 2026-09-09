@@ -11,6 +11,7 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - Editable pause message and 3–60 second timer.
 - Suggested destinations with local autocomplete.
 - Global and per-rule controls.
+- Light, Dark, or System appearance, saved on this browser and shared across extension pages.
 - URL validation, duplicate detection, and redirect-cycle prevention.
 - A 20-detour safety cap for the initial release.
 - Per-domain permission requests instead of broad install-time access.
