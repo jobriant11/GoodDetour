@@ -42,8 +42,8 @@
           </div>
           <div class="field">
             <label for="destination">Take me to</label>
-            <input id="destination" name="destination" type="url" inputmode="url" placeholder="https://apnews.com/" list="destination-list" maxlength="2048" required>
-            <datalist id="destination-list"></datalist>
+            <textarea id="destination" name="destination" rows="3" inputmode="url" placeholder="https://apnews.com/&#10;https://www.npr.org/" maxlength="20489" aria-describedby="destination-hint" required></textarea>
+            <span id="destination-hint" class="hint">One URL per line, up to 10. Each unique destination has an equal chance on every visit.</span>
           </div>
           <div class="field">
             <label for="mode">How should it feel?</label>

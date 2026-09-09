@@ -9,7 +9,8 @@ A calm, local-first browser extension that redirects distracting sites toward pl
 - Domain-based redirects using Chrome Manifest V3 dynamic rules.
 - Calm pause page or immediate direct redirect.
 - Editable pause message and 3–60 second timer.
-- Suggested destinations with local autocomplete.
+- Up to 10 destination URLs per detour, with an equal random choice on each visit.
+- Suggested destinations that can be added to a detour in one click.
 - Global and per-rule controls.
 - Light, Dark, or System appearance, saved on this browser and shared across extension pages.
 - URL validation, duplicate detection, and redirect-cycle prevention.

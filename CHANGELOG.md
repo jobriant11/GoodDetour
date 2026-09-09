@@ -4,6 +4,10 @@ All notable changes to Good Detour are documented here.
 
 ## Unreleased
 
+- Support up to 10 unique destinations per rule, chosen with equal probability on every visit.
+- Keep pause-page and direct modes, old single-URL rules, JSON backups, and Chrome Sync working with destination lists.
+- Validate every destination and every possible redirect cycle, including source subdomains.
+- Preserve synced rules when another browser updates only a rule.
 - Add Light, Dark, and System appearance controls to the popup and redirect settings.
 - Apply the saved device-local appearance across extension pages, with live system-theme and cross-page updates.
 - Improve keyboard focus visibility and theme-aware form, notice, and action colors.

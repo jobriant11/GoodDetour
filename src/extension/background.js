@@ -1,6 +1,5 @@
 import {
   APPEARANCE_KEY,
-  assertRuleLimit,
   compileRules,
   defaultState,
   fromSyncItems,
@@ -11,7 +10,8 @@ import {
   SYNC_RULE_PREFIX,
   SYNC_SETTINGS_KEY,
   syncStorageUsage,
-  toSyncItems
+  toSyncItems,
+  validateRules
 } from "./core.js";
 import { hasHostPermission, storageGet, storageRemove, storageSet } from "./platform.js";
 
@@ -60,7 +60,7 @@ async function removeSyncState() {
 
 async function persistState(value) {
   const state = mergeState(value);
-  assertRuleLimit(state.rules);
+  state.rules = validateRules(state.rules);
   if (await syncEnabled()) {
     await writeSyncState(state);
   } else {
@@ -79,6 +79,7 @@ async function authorizedRules(state) {
 }
 
 async function syncRedirectRules(state) {
+  validateRules(state.rules);
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: existing.map((rule) => rule.id),
@@ -151,7 +152,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
     (key) => key === SYNC_SETTINGS_KEY || key.startsWith(SYNC_RULE_PREFIX),
   );
   if (!relevant) return;
-  if (changes[SYNC_SETTINGS_KEY]?.newValue === undefined) {
+  if (SYNC_SETTINGS_KEY in changes && changes[SYNC_SETTINGS_KEY].newValue === undefined) {
     const local = await storageGet(LOCAL_STATS_KEY);
     const state = mergeState({
       ...defaultState(),

@@ -3,18 +3,24 @@ import assert from "node:assert/strict";
 import {
   assertRuleLimit,
   compileRules,
+  chooseDestination,
   createRule,
   defaultState,
+  destinationUrls,
   findCycle,
   fromSyncItems,
   MAX_RULES,
+  MAX_DESTINATIONS,
   mergeState,
   normalizeHostname,
   normalizeUrl,
+  portableState,
+  resolveRedirect,
   SYNC_RULE_PREFIX,
   SYNC_SETTINGS_KEY,
   syncStorageUsage,
-  toSyncItems
+  toSyncItems,
+  validateRules
 } from "../src/extension/core.js";
 import { buildHostOrigins } from "../src/extension/platform.js";
 
@@ -126,4 +132,67 @@ test("caps configuration and compiled redirects at twenty detours", () => {
   assert.equal(compileRules(twentyOne).length, 20);
   assert.throws(() => assertRuleLimit(twentyOne), /up to 20 detours/);
   assert.throws(() => toSyncItems({ ...defaultState(), rules: twentyOne }), /up to 20 detours/);
+});
+
+test("migrates a legacy URL and retains multiple destinations through backup and Sync", () => {
+  const legacy = { id: "legacy", sourceHost: "old.test", destinationUrl: "https://safe.test/", mode: "direct" };
+  const multiple = createRule({ id: "many", sourceHost: "many.test", destinationUrls: ["a.test", "b.test"] });
+  const state = mergeState({ version: 2, rules: [legacy, multiple], localStats: { totalPauses: 9 } });
+  assert.equal(state.version, 3);
+  assert.deepEqual(state.rules[0].destinationUrls, ["https://safe.test/"]);
+  assert.equal(state.rules[0].id, "legacy");
+  const backup = JSON.parse(JSON.stringify(portableState(state)));
+  const imported = validateRules(backup.rules);
+  assert.deepEqual(imported.map(destinationUrls), state.rules.map(destinationUrls));
+  const synced = fromSyncItems(toSyncItems(state));
+  assert.deepEqual(synced.rules.map(destinationUrls), state.rules.map(destinationUrls));
+  assert.equal(synced.localStats.totalPauses, 0);
+  assert.equal(JSON.stringify(toSyncItems(state)).includes("totalPauses"), false);
+});
+
+test("validates every destination and rejects every possible cycle including subdomains", () => {
+  const input = { sourceHost: "source.test", destinationUrls: ["a.test", "b.test", "https://a.test/"] };
+  assert.deepEqual(createRule(input).destinationUrls, ["https://a.test/", "https://b.test/"]);
+  for (const invalid of ["javascript:alert(1)", "ftp://files.test", "", null, "https://source.test", "https://child.source.test/path"]) {
+    assert.throws(() => createRule({ ...input, destinationUrls: ["a.test", invalid] }));
+  }
+  assert.throws(() => createRule({ ...input, destinationUrls: [] }), /at least one/);
+  assert.throws(() => createRule({ ...input, destinationUrls: "https://a.test" }), /at least one/);
+  assert.throws(() => createRule({ ...input, destinationUrls: Array(MAX_DESTINATIONS + 1).fill("a.test") }), /up to 10/);
+  const first = createRule({ id: "one", sourceHost: "one.test", destinationUrls: ["safe.test", "child.two.test"] });
+  const second = createRule({ id: "two", sourceHost: "two.test", destinationUrls: ["safe.test", "three.test"] }, [first]);
+  assert.throws(() => createRule({ sourceHost: "three.test", destinationUrls: ["safe.test", "child.one.test"] }, [first, second]), /redirect loop/);
+  const disabled = { id: "three", sourceHost: "three.test", destinationUrl: "https://one.test/", enabled: false };
+  assert.doesNotThrow(() => validateRules([first, second, disabled]));
+  assert.throws(() => validateRules([first, second, { ...disabled, enabled: true }]), /redirect loop/);
+  assert.throws(() => toSyncItems({ ...defaultState(), rules: [first, second, { ...disabled, enabled: true }] }), /redirect loop/);
+});
+
+test("gives each unique destination an equal interval and chooses afresh per visit", () => {
+  const rule = createRule({ id: "many", sourceHost: "many.test", destinationUrls: ["a.test", "b.test", "c.test", "a.test"] });
+  const counts = new Map();
+  for (let index = 0; index < 300; index += 1) {
+    const url = chooseDestination(rule, () => (index + 0.5) / 300);
+    counts.set(url, (counts.get(url) || 0) + 1);
+  }
+  assert.deepEqual([...counts.values()], [100, 100, 100]);
+  const state = { ...defaultState(), rules: [rule] };
+  assert.equal(resolveRedirect(state, rule.id, () => 0).destinationUrl, "https://a.test/");
+  assert.equal(resolveRedirect(state, rule.id, () => 0.999999).destinationUrl, "https://c.test/");
+  assert.throws(() => resolveRedirect({ ...state, enabled: false }, rule.id), /paused/);
+  assert.throws(() => resolveRedirect({ ...state, rules: [{ ...rule, enabled: false }] }, rule.id), /no longer active/);
+  assert.throws(() => resolveRedirect(state, "deleted"), /no longer active/);
+});
+
+test("multiple direct destinations use a per-visit relay while single direct URLs remain native", () => {
+  const direct = createRule({ id: "direct", sourceHost: "direct.test", destinationUrls: ["a.test", "b.test"], mode: "direct" });
+  const paused = { ...direct, id: "pause", sourceHost: "pause.test", mode: "pause" };
+  const single = createRule({ id: "single", sourceHost: "single.test", destinationUrl: "safe.test", mode: "direct" });
+  const compiled = compileRules([direct, paused, single, { ...direct, id: "off", enabled: false }]);
+  assert.deepEqual(compiled.map((rule) => rule.action.redirect), [
+    { extensionPath: "/landing.html?rule=direct" },
+    { extensionPath: "/landing.html?rule=pause" },
+    { url: "https://safe.test/" }
+  ]);
+  assert.deepEqual(compileRules([direct], false), []);
 });
