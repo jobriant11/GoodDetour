@@ -1,4 +1,14 @@
-# Launch checklist
+# Release and launch checklist
+
+## 0.2.0 release
+
+- [x] Run tests covering multiple destinations, legacy rules, Sync, failed imports and saves, appearance, and contrast.
+- [x] Check extension syntax and manifest, and build the release ZIP.
+- [ ] Verify the 0.2.0 unpacked extension in Chrome, including popup/options appearance, direct and paused random destinations, and keyboard navigation.
+- [ ] Confirm the existing store version, publish the verified source and ZIP through GitHub, and upload the update to [Good Detour's existing store item](https://chromewebstore.google.com/detail/good-detour/egfngcmhebknhnnfofimoaegapdfegfb).
+- [ ] Record the store submission and publication result.
+
+The original launch checklist below records earlier work. Its unchecked items do not establish the current publisher-account or store status.
 
 ## Product and legal blockers
 
@@ -27,7 +37,7 @@
 
 ## Store assets and account
 
-- [ ] Register a Chrome Web Store developer account, pay the one-time fee, and enable required 2-Step Verification. [Registration guide](https://developer.chrome.com/docs/webstore/register)
+- [ ] Sign in to the publisher account that owns the existing Good Detour store item.
 - [ ] Verify developer identity and contact details.
 - [x] Create final 16, 32, 48, and 128 px PNG icons plus required store screenshots and promotional artwork.
 - [ ] Publish the privacy policy and support page on a stable HTTPS domain.
@@ -37,7 +47,7 @@
 - [ ] Smoke-test the existing Product Lab survey application before and after deployment and retain a route-scoped rollback.
 - [ ] Complete the store privacy/data-use disclosures accurately.
 - [ ] Explain each permission in the listing.
-- [ ] Upload `dist/good-detour-chrome.zip`, submit with deferred publishing, and complete reviewer test instructions.
+- [ ] Upload `dist/good-detour-chrome.zip` to the existing store item, submit with deferred publishing, and complete reviewer test instructions.
 
 ## Operations
 
