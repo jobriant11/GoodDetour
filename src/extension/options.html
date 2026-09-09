@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Good Detour — Redirects</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module" src="theme.js"></script>
   </head>
   <body>
     <header class="shell topbar">
       <div class="brand"><span class="mark" aria-hidden="true">↗</span> Good Detour</div>
-      <label class="switch"><input id="global-toggle" type="checkbox"> Redirects on</label>
+      <div class="topbar-controls">
+        <label class="appearance-choice" for="appearance">Appearance
+          <select id="appearance" aria-describedby="appearance-notice" disabled>
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <label class="switch"><input id="global-toggle" type="checkbox"> Redirects on</label>
+      </div>
     </header>
+    <p id="appearance-notice" class="shell hint hidden" role="status"></p>
 
     <main>
       <section class="shell hero">
@@ -31,8 +42,8 @@
           </div>
           <div class="field">
             <label for="destination">Take me to</label>
-            <input id="destination" name="destination" type="url" inputmode="url" placeholder="https://apnews.com/" list="destination-list" maxlength="2048" required>
-            <datalist id="destination-list"></datalist>
+            <textarea id="destination" name="destination" rows="3" inputmode="url" placeholder="https://apnews.com/&#10;https://www.npr.org/" maxlength="20489" aria-describedby="destination-hint" required></textarea>
+            <span id="destination-hint" class="hint">One URL per line, up to 10. Each unique destination has an equal chance on every visit.</span>
           </div>
           <div class="field">
             <label for="mode">How should it feel?</label>
@@ -83,6 +94,7 @@
               <input id="pause-seconds" type="number" min="3" max="60">
             </div>
             <button class="button secondary" type="submit">Save pause page</button>
+            <p id="preferences-notice" class="notice hidden" role="status"></p>
           </form>
         </section>
         <section class="card card-narrow">

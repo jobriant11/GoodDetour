@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Good Detour</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module" src="theme.js"></script>
   </head>
   <body class="popup">
     <div class="brand"><span class="mark" aria-hidden="true">↗</span> Good Detour</div>
@@ -16,6 +17,14 @@
       <button id="manage" class="button secondary" type="button">Manage redirects</button>
     </div>
     <label class="switch" style="margin-top:16px"><input id="global-toggle" type="checkbox"> Redirects on</label>
+    <label class="appearance-choice" for="appearance">Appearance
+      <select id="appearance" aria-describedby="appearance-notice" disabled>
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+    <p id="appearance-notice" class="hint hidden" role="status"></p>
     <p class="popup-footer"><a href="feedback.html" target="_blank">Send feedback</a> · <a href="privacy.html" target="_blank">Privacy</a></p>
     <p id="popup-notice" class="notice hidden" role="status"></p>
     <script type="module" src="popup.js"></script>

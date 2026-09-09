@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { defaultState, STORAGE_KEY, SYNC_ENABLED_KEY, SYNC_SETTINGS_KEY } from "../src/extension/core.js";
+import { APPEARANCE_KEY, createRule, defaultState, STORAGE_KEY, SYNC_ENABLED_KEY, SYNC_RULE_PREFIX, SYNC_SETTINGS_KEY } from "../src/extension/core.js";
 
 function pick(data, keys) {
   if (keys === null || keys === undefined) return { ...data };
@@ -22,7 +22,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
     updatedAt: "2026-08-19T12:00:00.000Z"
   }];
 
-  const localData = { [STORAGE_KEY]: state };
+  const localData = { [STORAGE_KEY]: state, [APPEARANCE_KEY]: "dark" };
   const syncData = {};
   let messageListener;
   let storageChangeListener;
@@ -71,6 +71,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(migrated.enabled, true);
   assert.equal(localData[SYNC_ENABLED_KEY], true);
   assert.equal(JSON.stringify(syncData).includes("totalPauses"), false);
+  assert.equal(APPEARANCE_KEY in syncData, false);
   assert.ok(Object.keys(syncData).some((key) => key.startsWith("goodDetourSyncRule:")));
   assert.deepEqual(dynamicRules, []);
 
@@ -85,10 +86,31 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(dynamicRules.length, 1);
   assert.equal(dynamicRules[0].action.redirect.url, "https://apnews.com/");
 
+  const multiple = createRule({
+    ...onSecondBrowser.rules[0],
+    destinationUrls: ["https://apnews.com/", "https://www.npr.org/"]
+  });
+  const replaced = await send({ type: "state:replace", state: { ...onSecondBrowser, rules: [multiple] } });
+  assert.deepEqual(replaced.rules[0].destinationUrls, ["https://apnews.com/", "https://www.npr.org/"]);
+  assert.equal(dynamicRules[0].action.redirect.extensionPath, "/landing.html?rule=cnn-rule");
+  const syncKey = `${SYNC_RULE_PREFIX}cnn-rule`;
+  await storageChangeListener({ [syncKey]: { newValue: syncData[syncKey] } }, "sync");
+  assert.equal(localData[SYNC_ENABLED_KEY], true);
+  assert.equal((await send({ type: "state:get" })).rules[0].destinationUrls.length, 2);
+  const beforeInvalid = JSON.stringify(syncData);
+  await assert.rejects(send({ type: "state:replace", state: { ...replaced, rules: [{ ...multiple, destinationUrls: ["https://safe.test", "https://child.cnn.com/"] }] } }), /same site/);
+  assert.equal(JSON.stringify(syncData), beforeInvalid);
+  await send({ type: "rule:toggle", id: multiple.id, enabled: false });
+  assert.deepEqual(dynamicRules, []);
+  await send({ type: "rule:toggle", id: multiple.id, enabled: true });
+  assert.equal(dynamicRules[0].action.redirect.extensionPath, "/landing.html?rule=cnn-rule");
+
   const keptLocally = await send({ type: "data:delete-synced" });
   assert.equal(keptLocally.rules[0].sourceHost, "cnn.com");
+  assert.deepEqual(keptLocally.rules[0].destinationUrls, multiple.destinationUrls);
   assert.equal(localData[SYNC_ENABLED_KEY], false);
   assert.equal(localData[STORAGE_KEY].rules[0].sourceHost, "cnn.com");
+  assert.equal(localData[APPEARANCE_KEY], "dark");
   assert.deepEqual(syncData, {});
   assert.equal(dynamicRules.length, 1);
 
@@ -98,6 +120,7 @@ test("migrates local state to Chrome Sync and waits for per-browser site access"
   assert.equal(deleted.localStats.totalPauses, 0);
   assert.equal(STORAGE_KEY in localData, false);
   assert.equal(SYNC_ENABLED_KEY in localData, false);
+  assert.equal(APPEARANCE_KEY in localData, false);
   assert.deepEqual(syncData, {});
   assert.deepEqual(dynamicRules, []);
 

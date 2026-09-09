@@ -1,4 +1,4 @@
-import { createRule, findCycle, MAX_RULES, mergeState, suggestions } from "./core.js";
+import { createRule, destinationUrls, findCycle, MAX_RULES, mergeState, suggestions } from "./core.js";
 import {
   addStorageChangedListener,
   getMissingHostPermissions,
@@ -20,8 +20,8 @@ const elements = {
   empty: document.querySelector("#empty-state"),
   count: document.querySelector("#rule-count"),
   suggestions: document.querySelector("#suggestions"),
-  datalist: document.querySelector("#destination-list"),
   preferencesForm: document.querySelector("#preferences-form"),
+  preferencesNotice: document.querySelector("#preferences-notice"),
   landingTitle: document.querySelector("#landing-title"),
   landingMessage: document.querySelector("#landing-message"),
   pauseSeconds: document.querySelector("#pause-seconds"),
@@ -92,10 +92,11 @@ function renderRule(rule) {
   title.textContent = rule.label;
   const route = document.createElement("p");
   route.className = "rule-route";
-  route.textContent = `${rule.sourceHost} → ${rule.destinationUrl}`;
+  const destinations = destinationUrls(rule);
+  route.textContent = `${rule.sourceHost} → ${destinations.join(" · ")}`;
   const mode = document.createElement("span");
   mode.className = "muted";
-  mode.textContent = `${rule.mode === "pause" ? "Pause page" : "Direct"} · ${rule.enabled ? "On" : "Off"}`;
+  mode.textContent = `${rule.mode === "pause" ? "Pause page" : "Direct"}${destinations.length > 1 ? ` · ${destinations.length} equal-chance destinations` : ""} · ${rule.enabled ? "On" : "Off"}`;
   copy.append(title, route, mode);
 
   const actions = document.createElement("div");
@@ -116,7 +117,7 @@ function renderRule(rule) {
   edit.addEventListener("click", () => {
     elements.ruleId.value = rule.id;
     elements.source.value = rule.sourceHost;
-    elements.destination.value = rule.destinationUrl;
+    elements.destination.value = destinationUrls(rule).join("\n");
     elements.mode.value = rule.mode;
     elements.saveRule.disabled = false;
     elements.source.focus();
@@ -145,7 +146,7 @@ elements.form.addEventListener("submit", async (event) => {
       {
         id: elements.ruleId.value || undefined,
         sourceHost: elements.source.value,
-        destinationUrl: elements.destination.value,
+        destinationUrls: elements.destination.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
         mode: elements.mode.value,
         enabled: previous?.enabled,
         createdAt: previous?.createdAt
@@ -154,8 +155,8 @@ elements.form.addEventListener("submit", async (event) => {
     );
     const granted = await requestHostPermission(rule.sourceHost);
     if (!granted) throw new Error(`Good Detour needs permission for ${rule.sourceHost} before it can redirect that site.`);
-    state.rules = state.rules.filter((candidate) => candidate.id !== rule.id).concat(rule);
-    state = await message({ type: "state:replace", state });
+    const next = { ...state, rules: state.rules.filter((candidate) => candidate.id !== rule.id).concat(rule) };
+    state = await message({ type: "state:replace", state: next });
     elements.form.reset();
     elements.ruleId.value = "";
     elements.mode.value = state.preferences.defaultMode;
@@ -174,12 +175,21 @@ elements.globalToggle.addEventListener("change", async () => {
 
 elements.preferencesForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  state.preferences.landingTitle = elements.landingTitle.value.trim();
-  state.preferences.landingMessage = elements.landingMessage.value.trim();
-  state.preferences.pauseSeconds = Math.min(60, Math.max(3, Number(elements.pauseSeconds.value) || 8));
-  state = await message({ type: "state:replace", state });
-  elements.preferencesForm.querySelector("button").textContent = "Saved";
-  setTimeout(() => { elements.preferencesForm.querySelector("button").textContent = "Save pause page"; }, 1200);
+  const next = {
+    ...state,
+    preferences: {
+      ...state.preferences,
+      landingTitle: elements.landingTitle.value.trim(),
+      landingMessage: elements.landingMessage.value.trim(),
+      pauseSeconds: Math.min(60, Math.max(3, Number(elements.pauseSeconds.value) || 8))
+    }
+  };
+  try {
+    state = await message({ type: "state:replace", state: next });
+    showNotice(elements.preferencesNotice, "Pause page saved.");
+  } catch (error) {
+    showNotice(elements.preferencesNotice, error.message, true);
+  }
 });
 
 elements.exportButton.addEventListener("click", () => {
@@ -215,8 +225,8 @@ elements.importFile.addEventListener("change", async () => {
     if (!(await requestHostPermissions(hosts))) {
       throw new Error("Permission was not granted for every imported site. Import cancelled.");
     }
-    state = mergeState({ ...state, rules: validated, preferences: imported.preferences });
-    state = await message({ type: "state:replace", state });
+    const next = mergeState({ ...state, rules: validated, preferences: imported.preferences });
+    state = await message({ type: "state:replace", state: next });
     showNotice(elements.backupNotice, `Imported ${validated.length} routes.`);
     render();
     await refreshSyncUi();
@@ -292,11 +302,6 @@ addStorageChangedListener(async (changes, areaName) => {
 });
 
 for (const suggestion of suggestions) {
-  const option = document.createElement("option");
-  option.value = suggestion.url;
-  option.label = suggestion.name;
-  elements.datalist.append(option);
-
   const button = document.createElement("button");
   button.className = "suggestion";
   button.type = "button";
@@ -306,7 +311,8 @@ for (const suggestion of suggestions) {
   note.textContent = suggestion.note;
   button.append(name, note);
   button.addEventListener("click", () => {
-    elements.destination.value = suggestion.url;
+    const current = elements.destination.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    elements.destination.value = [...new Set([...current, suggestion.url])].join("\n");
     elements.destination.focus();
     window.scrollTo({ top: 180, behavior: "smooth" });
   });
