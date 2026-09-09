@@ -21,6 +21,7 @@ const elements = {
   count: document.querySelector("#rule-count"),
   suggestions: document.querySelector("#suggestions"),
   preferencesForm: document.querySelector("#preferences-form"),
+  preferencesNotice: document.querySelector("#preferences-notice"),
   landingTitle: document.querySelector("#landing-title"),
   landingMessage: document.querySelector("#landing-message"),
   pauseSeconds: document.querySelector("#pause-seconds"),
@@ -174,12 +175,21 @@ elements.globalToggle.addEventListener("change", async () => {
 
 elements.preferencesForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  state.preferences.landingTitle = elements.landingTitle.value.trim();
-  state.preferences.landingMessage = elements.landingMessage.value.trim();
-  state.preferences.pauseSeconds = Math.min(60, Math.max(3, Number(elements.pauseSeconds.value) || 8));
-  state = await message({ type: "state:replace", state });
-  elements.preferencesForm.querySelector("button").textContent = "Saved";
-  setTimeout(() => { elements.preferencesForm.querySelector("button").textContent = "Save pause page"; }, 1200);
+  const next = {
+    ...state,
+    preferences: {
+      ...state.preferences,
+      landingTitle: elements.landingTitle.value.trim(),
+      landingMessage: elements.landingMessage.value.trim(),
+      pauseSeconds: Math.min(60, Math.max(3, Number(elements.pauseSeconds.value) || 8))
+    }
+  };
+  try {
+    state = await message({ type: "state:replace", state: next });
+    showNotice(elements.preferencesNotice, "Pause page saved.");
+  } catch (error) {
+    showNotice(elements.preferencesNotice, error.message, true);
+  }
 });
 
 elements.exportButton.addEventListener("click", () => {
@@ -215,8 +225,8 @@ elements.importFile.addEventListener("change", async () => {
     if (!(await requestHostPermissions(hosts))) {
       throw new Error("Permission was not granted for every imported site. Import cancelled.");
     }
-    state = mergeState({ ...state, rules: validated, preferences: imported.preferences });
-    state = await message({ type: "state:replace", state });
+    const next = mergeState({ ...state, rules: validated, preferences: imported.preferences });
+    state = await message({ type: "state:replace", state: next });
     showNotice(elements.backupNotice, `Imported ${validated.length} routes.`);
     render();
     await refreshSyncUi();
